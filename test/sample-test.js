@@ -16,18 +16,24 @@ describe("GemstoneMinter", function () {
     const purchases = await gemstoneMinter.getPurchasesOfCustomer(
       addr1.address
     );
-    console.log(purchases);
+    //console.log(purchases);
 
-    const uri = await gemstoneMinter.uri(100);
-    console.log(uri);
+    const uri = await gemstoneMinter.uri(101);
+    console.log("non-redeemed", uri);
+
+    const redeemTx = await gemstoneMinter.redeemGemstoneExperimental(
+      addr1.address,
+      101
+    );
+    await redeemTx.wait();
+
+    const redeemedUri = await gemstoneMinter.uri(101);
+    console.log("redeemed", redeemedUri);
 
     const mintTx2 = await gemstoneMinter.mint(addr1.address, 2);
     await mintTx2.wait();
 
     const uri2 = await gemstoneMinter.uri(200);
     console.log(uri2);
-
-    const uri3 = await gemstoneMinter.uri(100);
-    console.log(uri3);
   });
 });

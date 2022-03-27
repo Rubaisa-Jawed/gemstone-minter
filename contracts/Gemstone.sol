@@ -10,6 +10,7 @@ contract Gemstone {
     mapping(Types.GemstoneType => address[]) bundleWhitelist; //For reference
     mapping(address => Types.PurchaseInfo[]) purchases;
     Types.Gemstone[] gemstones;
+    mapping(uint8 => bool) redeemedList;
     uint256 constant VALIDITY_PERIOD = 31556952; //1 year
 
     constructor() {
@@ -46,17 +47,9 @@ contract Gemstone {
         bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
     }
 
-    function addGobletIfEligible(address customerAddress) internal {
-        if (isEligibleToMintGoblet(customerAddress)) {
-            Types.PurchaseInfo memory newPurchase = Types.PurchaseInfo(
-                Types.GemstoneType.Goblet,
-                0,
-                block.timestamp,
-                block.timestamp + VALIDITY_PERIOD,
-                false
-            );
-            purchases[customerAddress].push(newPurchase);
-        }
+    function addToRedeemedWithDefault(uint8 gemType) internal {
+        require(redeemedList[gemType] == false);
+        redeemedList[gemType] = false;
     }
 
     //Reads
@@ -99,21 +92,34 @@ contract Gemstone {
         return validGemCount == 6;
     }
 
-    function isGemstoneRedeemed(address customerAddress, uint8 gemId)
-        public
-        view
-        returns (bool)
-    {
-        require(gemId >= 0 && gemId <= uint8(Types.GemstoneType.Goblet));
-        bool isRedeemed = false;
-        for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
-            Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
-            if (purchase.gemId == gemId && purchase.redeemed) {
-                isRedeemed = true;
-                break;
-            }
-        }
-        return isRedeemed;
+    function isGemRedeemedForId(uint8 gemId) internal view returns (bool) {
+        return redeemedList[gemId] || false;
+    }
+
+    function getGemstoneType(uint8 gemId) internal pure returns (uint8) {
+        if (gemId > 0 && gemId <= uint8(Types.GemstoneType.Azure) * 100 + 50)
+            return uint8(Types.GemstoneType.Azure);
+        else if (
+            gemId > uint8(Types.GemstoneType.Azure) * 100 + 100 &&
+            gemId <= uint8(Types.GemstoneType.Lapis) * 100 + 50
+        ) return uint8(Types.GemstoneType.Lapis);
+        else if (
+            gemId > uint8(Types.GemstoneType.Lapis) * 100 + 100 &&
+            gemId <= uint8(Types.GemstoneType.Saphirre) * 100 + 50
+        ) return uint8(Types.GemstoneType.Saphirre);
+        else if (
+            gemId > uint8(Types.GemstoneType.Saphirre) * 100 + 100 &&
+            gemId <= uint8(Types.GemstoneType.Emerald) * 100 + 50
+        ) return uint8(Types.GemstoneType.Emerald);
+        else if (
+            gemId > uint8(Types.GemstoneType.Emerald) * 100 + 100 &&
+            gemId <= uint8(Types.GemstoneType.Ruby) * 100 + 50
+        ) return uint8(Types.GemstoneType.Ruby);
+        else if (
+            gemId > uint8(Types.GemstoneType.Ruby) * 100 + 100 &&
+            gemId <= uint8(Types.GemstoneType.Diamond) * 100 + 50
+        ) return uint8(Types.GemstoneType.Diamond);
+        else return uint8(Types.GemstoneType.Azure);
     }
 
     function getPurchasesOfUser(address customerAddress)
@@ -151,5 +157,29 @@ contract Gemstone {
 
     function getOwnerAddress() internal view returns (address) {
         return owner;
+    }
+
+    //Goblet fns
+    function addGobletIfEligible(address customerAddress) internal {
+        if (isEligibleToMintGoblet(customerAddress)) {
+            Types.PurchaseInfo memory newPurchase = Types.PurchaseInfo(
+                Types.GemstoneType.Goblet,
+                0,
+                block.timestamp,
+                block.timestamp + VALIDITY_PERIOD,
+                false
+            );
+            purchases[customerAddress].push(newPurchase);
+        }
+    }
+
+    function redeemGemstone(address customerAddress, uint8 gemId) internal {
+        for (uint8 i = 0; i < purchases[customerAddress].length; i++) {
+            if (purchases[customerAddress][i].gemId == gemId) {
+                purchases[customerAddress][i].redeemed = true;
+                break;
+            }
+        }
+        redeemedList[gemId] = true;
     }
 }
