@@ -1,8 +1,19 @@
-# Basic Sample Hardhat Project
+# Gemstone generator for Multi Grain & Cane Whiskey
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+- ERC1155 #1:
+  - 6 different token types (6 different gem stones)
+  - 50 of each token (6x50 = 300 tokens total supply), but all are NFTs (so all have different #IDs; for example #1-#50 is type 1, #51-100 is type 2, etc.)
+  - Address must be whitelisted for a specific address in order to mint a gemstone NFT of a specific type
+  - Addresses will be whitlelisted by client
+  - max 1 token type mint per address (i.e. user A can only mint 1x gemstone A)
+  - Gemstone tokens must have a property to keep track of whether it’s been used to redeem a goblet or not (`redeemed` property)
+  - 1-1.5 weeks turnaround time (because launch was already delayed)
+- ERC1155 #2:
+  - 1 token type, the gemstone goblet
+  - users can use 6 unused gemstones to mint 1 goblet
+  - for the next 3 or so (TBD) years, users can mint ‘REPLICA’ goblets every year (each year will have different art)
 
-Try running some of the following tasks:
+Scripts:
 
 ```shell
 npx hardhat accounts

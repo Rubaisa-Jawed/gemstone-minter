@@ -20,9 +20,10 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         );
         addToWhitelist(customerAddress, gemstoneType);
         uint8 mintId = recordPurchase(customerAddress, gemstoneType);
-        //Todo add the right data
+        //Todo add the right data or throw it out depending on what the ipfs structure looks like
+        //Gem 1 NFTs would have IDs: 1,2,3... Gem 2 would be 101, 102, 103... and so on
+        _mint(customerAddress, gemstoneType * 100 + mintId, 1, "");
         _setURI("The URI which contains gemstoneType and mintId");
-        _mint(customerAddress, mintId, 1, "");
     }
 
     function getOwner() public view returns (address) {
