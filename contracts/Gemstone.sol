@@ -10,7 +10,7 @@ contract Gemstone {
     mapping(Types.GemstoneType => address[]) bundleWhitelist; //For reference
     mapping(address => Types.PurchaseInfo[]) purchases;
     Types.Gemstone[] gemstones;
-    mapping(uint8 => bool) redeemedList;
+    mapping(uint8 => uint256) redeemedList;
     uint256 constant VALIDITY_PERIOD = 31556952; //1 year
 
     constructor() {
@@ -48,8 +48,7 @@ contract Gemstone {
     }
 
     function addToRedeemedWithDefault(uint8 gemType) internal {
-        require(redeemedList[gemType] == false);
-        redeemedList[gemType] = false;
+        redeemedList[gemType] = 0;
     }
 
     //Reads
@@ -93,7 +92,10 @@ contract Gemstone {
     }
 
     function isGemRedeemedForId(uint8 gemId) internal view returns (bool) {
-        return redeemedList[gemId] || false;
+        if (redeemedList[gemId] == 0) return false;
+        else if (block.timestamp > redeemedList[gemId] + VALIDITY_PERIOD)
+            return false;
+        else return true;
     }
 
     function getGemstoneType(uint8 gemId) internal pure returns (uint8) {
@@ -180,6 +182,6 @@ contract Gemstone {
                 break;
             }
         }
-        redeemedList[gemId] = true;
+        redeemedList[gemId] = block.timestamp;
     }
 }
