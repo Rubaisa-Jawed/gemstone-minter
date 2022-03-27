@@ -13,7 +13,7 @@
   - users can use 6 unused gemstones to mint 1 goblet
   - for the next 3 or so (TBD) years, users can mint ‘REPLICA’ goblets every year (each year will have different art)
 
-Scripts:
+Useful scripts:
 
 ```shell
 npx hardhat accounts
