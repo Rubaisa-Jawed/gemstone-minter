@@ -3,12 +3,12 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Gemstone.sol";
 import {Types} from "./libs/Types.sol";
 
-contract GemstoneMinter is Gemstone {
-    constructor() {
+contract GemstoneMinter is Gemstone, ERC1155 {
+    constructor() ERC1155("www.example.com") {
         console.log("Init GemstoneMinter success");
     }
 
