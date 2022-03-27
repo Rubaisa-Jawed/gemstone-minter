@@ -42,4 +42,12 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     {
         return getPurchasesOfUser(customerAddress);
     }
+
+    function uri(uint256 id) public view override returns (string memory) {
+        if (isGemRedeemedForId(uint8(id))) {
+            return "ipfs://non-redeemed/{id}.json";
+        } else {
+            return "ipfs://redeemed/{id}.json";
+        }
+    }
 }
