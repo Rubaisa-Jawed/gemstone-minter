@@ -19,6 +19,12 @@ async function main() {
 
   await gemstoneMinter.deployed();
 
+  const mintTx = await gemstoneMinter.mint(
+    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
+    1
+  );
+  await mintTx.wait();
+
   console.log("GemstoneMinter deployed to:", gemstoneMinter.address);
 }
 

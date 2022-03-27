@@ -15,8 +15,8 @@ fun getGemForId(id: Int): String{
 }
 
 fun getMetadataForId(id: Int, gemType: Int): String{
-    var json = "{\"description\":\"${getGemForId(gemType)} #${id}is a token minted on purchase of a case." +
-            "Collect all 6 tokens to be eligible to get the Goblet\",\"external_url\":\"https://www.maltgraincane.com/\",\"image\":\"ipfs://QmPnued79WP3NY6tnhrMx4dQ4YXi4d7Xbw99WeDENWVT33/${id}.svg\",\"name\":\"MultiGrain & Cane Whiskey ${getGemForId(gemType)}#${id}\"}"
+    var json = "{\"id\":\"${id}\",\"description\":\"${getGemForId(gemType)} #${id}is a token minted on purchase of a case." +
+            " Collect all 6 tokens to be eligible to get the Goblet\",\"external_url\":\"https://www.maltgraincane.com/\",\"image\":\"ipfs://QmPnued79WP3NY6tnhrMx4dQ4YXi4d7Xbw99WeDENWVT33/${id}.svg\",\"name\":\"MultiGrain & Cane Whiskey ${getGemForId(gemType)}#${id}\"}"
     return json
 }
 
@@ -36,7 +36,10 @@ fun main() {
     System.out.println("Working Directory = " + dir);
     for(i in 0..5){
         for (j in 1..50){
-            writeToFile(dir, getMetadataForId(j, i), (i*100+j).toString())
+            //val fileName = java.lang.Integer.toHexString(i*100+j);
+            var fileName = String.format("0x%064X", i*100+j);
+            fileName = fileName.replace("0x","")
+            writeToFile(dir, getMetadataForId(j, i), fileName)
         }
     }
 }

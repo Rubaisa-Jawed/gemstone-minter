@@ -10,7 +10,7 @@ import {Types} from "./libs/Types.sol";
 contract GemstoneMinter is Gemstone, ERC1155 {
     constructor()
         ERC1155(
-            "ipfs://QmSBNdY1vYWF7znRs93hddiTciugt457EBf87AoqPXUSCu/{id}.json"
+            "ipfs://QmcjzQsiFaCLmvvgsjLwqRc7nEc5nUjavVD5u7WAn31MkZ/{id}.json"
         )
     {
         console.log("Init GemstoneMinter success");
@@ -24,6 +24,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         );
         addToWhitelist(customerAddress, gemstoneType);
         uint8 gemId = recordPurchase(customerAddress, gemstoneType);
+        console.log(Strings.toString(gemId));
         uint8 mintId = gemstoneType * 100 + gemId;
         //Todo add the right data or throw it out depending on what the ipfs structure looks like
         //Gem 1 NFTs would have IDs: 1,2,3... Gem 2 would be 101, 102, 103... and so on

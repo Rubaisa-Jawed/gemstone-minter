@@ -38,7 +38,7 @@ contract Gemstone {
         );
         purchases[customerAddress].push(newPurchase);
         gemstones[gemType].lastMintedId += 1;
-        return lastMinted;
+        return lastMinted + 1;
     }
 
     function addToWhitelist(address customerAddress, uint8 gemType) internal {

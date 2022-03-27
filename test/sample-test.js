@@ -17,5 +17,17 @@ describe("GemstoneMinter", function () {
       addr1.address
     );
     console.log(purchases);
+
+    const uri = await gemstoneMinter.uri(100);
+    console.log(uri);
+
+    const mintTx2 = await gemstoneMinter.mint(addr1.address, 2);
+    await mintTx2.wait();
+
+    const uri2 = await gemstoneMinter.uri(200);
+    console.log(uri2);
+
+    const uri3 = await gemstoneMinter.uri(100);
+    console.log(uri3);
   });
 });
