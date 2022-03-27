@@ -19,7 +19,10 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             "Gemstone already minted"
         );
         addToWhitelist(customerAddress, gemstoneType);
-        recordPurchase(customerAddress, gemstoneType);
+        uint8 mintId = recordPurchase(customerAddress, gemstoneType);
+        //Todo add the right data
+        _setURI("The URI which contains gemstoneType and mintId");
+        _mint(customerAddress, mintId, 1, "");
     }
 
     function getOwner() public view returns (address) {

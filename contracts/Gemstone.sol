@@ -124,6 +124,10 @@ contract Gemstone {
         return purchases[customerAddress];
     }
 
+    //TODO - add a function to get whitelist of a particular gemstone type
+    //TODO - add a function to get all purchases
+    //TODO - add a function to get supply left for a specific gemstone type
+
     //Inititalisers
     function initBundleWhitelist() internal {
         bundleWhitelist[Types.GemstoneType.Azure] = new address[](0);
