@@ -28,14 +28,6 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         //Todo add the right data or throw it out depending on what the ipfs structure looks like
         //Gem 1 NFTs would have IDs: 1,2,3... Gem 2 would be 101, 102, 103... and so on
         _mint(customerAddress, mintId, 1, "");
-        string memory metadataUri = string(
-            abi.encodePacked(
-                "ipfs://QmSBNdY1vYWF7znRs93hddiTciugt457EBf87AoqPXUSCu/",
-                Strings.toString(mintId),
-                ".json"
-            )
-        );
-        _setURI(metadataUri);
     }
 
     function getOwner() public view returns (address) {
