@@ -25,6 +25,21 @@ async function main() {
   );
   await mintTx.wait();
 
+  const redeemTx = await gemstoneMinter.redeemGemstoneExperimental(
+    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
+    101
+  );
+  await redeemTx.wait();
+
+  const redeemedUri = await gemstoneMinter.uri(101);
+  console.log("redeemed", redeemedUri);
+
+  const mintTx2 = await gemstoneMinter.mint(
+    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
+    2
+  );
+  await mintTx2.wait();
+
   console.log("GemstoneMinter deployed to:", gemstoneMinter.address);
 }
 

@@ -39,13 +39,17 @@ contract Gemstone {
         );
         purchases[customerAddress].push(newPurchase);
         gemstones[gemType].lastMintedId += 1;
-        redeemedList[lastMinted + 1] = false;
         return lastMinted + 1;
     }
 
     function addToWhitelist(address customerAddress, uint8 gemType) internal {
         require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Goblet));
         bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+    }
+
+    function addToRedeemedWithDefault(uint8 gemType) internal {
+        require(redeemedList[gemType] == false);
+        redeemedList[gemType] = false;
     }
 
     //Reads
@@ -88,25 +92,7 @@ contract Gemstone {
         return validGemCount == 6;
     }
 
-    function isGemstoneRedeemed(address customerAddress, uint8 gemId)
-        public
-        view
-        returns (bool)
-    {
-        require(gemId >= 0 && gemId <= uint8(Types.GemstoneType.Goblet));
-        bool isRedeemed = false;
-        for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
-            Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
-            if (purchase.gemId == gemId && purchase.redeemed) {
-                isRedeemed = true;
-                break;
-            }
-        }
-        return isRedeemed;
-    }
-
     function isGemRedeemedForId(uint8 gemId) internal view returns (bool) {
-        console.log("isGemRedeemedForId", redeemedList[gemId]);
         return redeemedList[gemId] || false;
     }
 
@@ -191,9 +177,9 @@ contract Gemstone {
         for (uint8 i = 0; i < purchases[customerAddress].length; i++) {
             if (purchases[customerAddress][i].gemId == gemId) {
                 purchases[customerAddress][i].redeemed = true;
-                redeemedList[gemId] = true;
                 break;
             }
         }
+        redeemedList[gemId] = true;
     }
 }

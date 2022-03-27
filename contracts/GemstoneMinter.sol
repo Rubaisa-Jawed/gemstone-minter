@@ -24,11 +24,10 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         );
         addToWhitelist(customerAddress, gemstoneType);
         uint8 gemId = recordPurchase(customerAddress, gemstoneType);
-        console.log(Strings.toString(gemId));
         uint8 mintId = gemstoneType * 100 + gemId;
-        //Todo add the right data or throw it out depending on what the ipfs structure looks like
-        //Gem 1 NFTs would have IDs: 1,2,3... Gem 2 would be 101, 102, 103... and so on
+        addToRedeemedWithDefault(mintId);
         _mint(customerAddress, mintId, 1, "");
+        console.log("Minted: ", Strings.toString(mintId));
     }
 
     function getOwner() public view returns (address) {
@@ -45,9 +44,18 @@ contract GemstoneMinter is Gemstone, ERC1155 {
 
     function uri(uint256 id) public view override returns (string memory) {
         if (isGemRedeemedForId(uint8(id))) {
-            return "ipfs://non-redeemed/{id}.json";
+            return
+                "ipfs://QmWo3zWi7a2PjEg43KaPCnaRqp3F9JxHTMFc7ejhKXsReF/{id}.json"; //Not redeemed ipfs
         } else {
-            return "ipfs://redeemed/{id}.json";
+            return
+                "ipfs://QmNW6jFna4EFfsvRBuoYy3PatnaEwVLB19P2D7Tyj5H6CH/{id}.json"; //Redeemed ipfs
         }
+    }
+
+    //TODO Remove after testing
+    function redeemGemstoneExperimental(address customerAddress, uint8 gemId)
+        public
+    {
+        redeemGemstone(customerAddress, gemId);
     }
 }
