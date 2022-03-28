@@ -7,6 +7,7 @@ import {Types} from "./libs/Types.sol";
 contract Gemstone {
     //State vars:
     address owner;
+    //should we make it address => Types.GemstoneType[]?
     mapping(Types.GemstoneType => address[]) bundleWhitelist; //For reference
     mapping(address => Types.PurchaseInfo[]) purchases;
     Types.Gemstone[] gemstones;
@@ -25,7 +26,7 @@ contract Gemstone {
         internal
         returns (uint8 gemId)
     {
-        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Goblet));
+        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Diamond));
         require(
             gemstones[gemType].lastMintedId < gemstones[gemType].supply - 1
         );
@@ -42,8 +43,9 @@ contract Gemstone {
         return lastMinted + 1;
     }
 
+    //TODO need to add a check that checks if the address already has whitelist for a certain gemstone type
     function addToWhitelist(address customerAddress, uint8 gemType) internal {
-        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Goblet));
+        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Diamond));
         bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
     }
 
@@ -61,7 +63,7 @@ contract Gemstone {
         view
         returns (bool)
     {
-        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Goblet));
+        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Diamond));
         bool isMinted = false;
         for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
             Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
@@ -166,7 +168,7 @@ contract Gemstone {
         if (isEligibleToMintGoblet(customerAddress)) {
             Types.PurchaseInfo memory newPurchase = Types.PurchaseInfo(
                 Types.GemstoneType.Goblet,
-                0,
+                0, 
                 block.timestamp,
                 block.timestamp + VALIDITY_PERIOD,
                 false

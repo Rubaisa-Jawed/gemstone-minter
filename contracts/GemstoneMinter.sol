@@ -5,9 +5,10 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Gemstone.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import {Types} from "./libs/Types.sol";
 
-contract GemstoneMinter is Gemstone, ERC1155 {
+contract GemstoneMinter is Gemstone, ERC1155, Ownable {
     constructor()
         ERC1155(
             "ipfs://QmcjzQsiFaCLmvvgsjLwqRc7nEc5nUjavVD5u7WAn31MkZ/{id}.json"
@@ -16,19 +17,39 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         console.log("Init GemstoneMinter success");
     }
 
+    //main function for public minting
     function mint(address customerAddress, uint8 gemstoneType) public payable {
-        require(isGemstoneAvailable(gemstoneType), "Gemstone not available");
+        require(isGemstoneAvailable(gemstoneType), "Gemstone not available"); //check if gemstone is available for minting
         require(
             !isGemstoneMinted(customerAddress, gemstoneType),
             "Gemstone already minted"
-        );
-        addToWhitelist(customerAddress, gemstoneType);
-        uint8 gemId = recordPurchase(customerAddress, gemstoneType);
+        );  //check if gemstone type has been minted by a specific customeraddress
+        uint8 gemId = recordPurchase(customerAddress, gemstoneType);  //mint of gemstone is recorded in mapping
         uint8 mintId = gemstoneType * 100 + gemId;
         addToRedeemedWithDefault(mintId);
         _mint(customerAddress, mintId, 1, "");
         console.log("Minted: ", Strings.toString(mintId));
     }
+
+    //function for adding address to whitelist for specific gemstone types
+   
+    //function for whitelist minting(incomplete; need to discuss)
+    // function whitelistMint(address customerAddress, uint8 gemstoneType) public {
+    //     require(
+    //         bundleWhitelist[Types.GemstoneType(gemstoneType)],
+    //         "Address doesnot have whitelist for this gemstone type"
+    //     );  //check if whitelist exists for this gemstone type
+    //     require(isGemstoneAvailable(gemstoneType), "Gemstone not available"); //check if gemstone is available for minting
+    //     require(
+    //         !isGemstoneMinted(customerAddress, gemstoneType),
+    //         "Gemstone not minted"
+    //     );  //check if gemstone type has been minted by a specific customeraddress
+    //     uint8 gemId = recordPurchase(customerAddress, gemstoneType);  //mint of gemstone is recorded in mapping
+    //     uint8 mintId = gemstoneType * 100 + gemId;
+    //     addToRedeemedWithDefault(mintId);
+    //     _mint(customerAddress, mintId, 1, "");
+    //     console.log("Whitelisted minted: ", Strings.toString(mintId));
+    // }
 
     function getOwner() public view returns (address) {
         return getOwnerAddress();
@@ -53,6 +74,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     }
 
     //TODO Remove after testing
+    //Not required here
     function redeemGemstoneExperimental(address customerAddress, uint8 gemId)
         public
     {
