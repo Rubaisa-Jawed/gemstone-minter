@@ -6,7 +6,7 @@ import {Types} from "./libs/Types.sol";
 
 contract Gemstone {
     //State vars:
-    // address owner;
+    address owner;
     mapping(Types.GemstoneType => address[]) bundleWhitelist; //For reference
     mapping(address => Types.PurchaseInfo[]) purchases;
     Types.Gemstone[] gemstones;
@@ -14,10 +14,15 @@ contract Gemstone {
     uint256 constant VALIDITY_PERIOD = 31556952; //1 year
 
     constructor() {
-        // owner = msg.sender;
+        owner = msg.sender;
         initBundleWhitelist();
         initGemstones();
         console.log("Init Gemstone success at", block.timestamp);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
     }
 
     //Writes
@@ -166,9 +171,9 @@ contract Gemstone {
         gemstones.push(Types.Gemstone(Types.GemstoneType.Goblet, 50, 0));
     }
 
-    // function getOwnerAddress() internal view returns (address) {
-    //     return owner;
-    // }
+    function getOwnerAddress() internal view returns (address) {
+        return owner;
+    }
 
     //Goblet fns
     function addGobletIfEligible(address customerAddress) internal {

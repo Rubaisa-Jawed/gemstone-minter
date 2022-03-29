@@ -4,10 +4,10 @@ const { ethers } = require("hardhat");
 describe("GemstoneMinter", function () {
     
     let GemstoneMinter, gemstoneMinter, gemstone;
-    let owner, addr1, addr2, addr3, addr4;
+    let owner, addr1, addr2, addr3, addr4, addr5, addr6;
 
   beforeEach(async function () {
-    [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
+    [owner, addr1, addr2, addr3, addr4, addr5, addr6] = await ethers.getSigners();
     GemstoneMinter = await ethers.getContractFactory("GemstoneMinter");
     gemstoneMinter = await GemstoneMinter.deploy();
     gemstone = await ethers.getContractFactory("Gemstone");
@@ -71,6 +71,20 @@ describe("GemstoneMinter", function () {
   
   it("Should fail as Gemstone does not exist", async function () {
     await expect(gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 6)).to.be.revertedWith("Gemstone does not exist");
+  });
+
+  it("Should allow a Whitelist Address to mint a Gemstone", async function () {
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
+    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr2.address, 5);
+    await gemstoneMinter.connect(addr2).whitelistMint(addr2.address, 5);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr3.address, 5);
+    await gemstoneMinter.connect(addr3).whitelistMint(addr3.address, 5);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr4.address, 5);
+  });
+
+  it("Should not allow a non Whitelist Address to mint a Gemstone", async function () {
+    await expect(gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4)).to.be.revertedWith("Address does not have whitelist for this gemstone type");
   });
 
 });

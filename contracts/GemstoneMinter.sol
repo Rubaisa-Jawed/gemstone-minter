@@ -5,10 +5,9 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Gemstone.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import {Types} from "./libs/Types.sol";
 
-contract GemstoneMinter is Gemstone, ERC1155, Ownable {
+contract GemstoneMinter is Gemstone, ERC1155 {
     constructor()
         ERC1155(
             "ipfs://QmcjzQsiFaCLmvvgsjLwqRc7nEc5nUjavVD5u7WAn31MkZ/{id}.json"
@@ -25,7 +24,7 @@ contract GemstoneMinter is Gemstone, ERC1155, Ownable {
             "Gemstone already minted"
         ); //check if gemstone type has been minted by a specific customeraddress
         uint8 gemId = recordPurchase(customerAddress, gemstoneType); //mint of gemstone is recorded in mapping
-        uint8 mintId = gemstoneType * 100 + gemId;
+        uint8 mintId = gemstoneType * 50 + gemId;
         addToRedeemedWithDefault(mintId);
         _mint(customerAddress, mintId, 1, "");
         console.log("Minted: ", Strings.toString(mintId));
@@ -40,27 +39,30 @@ contract GemstoneMinter is Gemstone, ERC1155, Ownable {
         addToWhitelist(customerAddress, gemstoneType);
     }
 
-    //function for whitelist minting(incomplete; need to discuss)
-    // function whitelistMint(address customerAddress, uint8 gemstoneType) public {
-    //     require(
-    //         bundleWhitelist[Types.GemstoneType(gemstoneType)],
-    //         "Address doesnot have whitelist for this gemstone type"
-    //     );  //check if whitelist exists for this gemstone type
-    //     require(isGemstoneAvailable(gemstoneType), "Gemstone not available"); //check if gemstone is available for minting
-    //     require(
-    //         !isGemstoneMinted(customerAddress, gemstoneType),
-    //         "Gemstone not minted"
-    //     );  //check if gemstone type has been minted by a specific customeraddress
-    //     uint8 gemId = recordPurchase(customerAddress, gemstoneType);  //mint of gemstone is recorded in mapping
-    //     uint8 mintId = gemstoneType * 100 + gemId;
-    //     addToRedeemedWithDefault(mintId);
-    //     _mint(customerAddress, mintId, 1, "");
-    //     console.log("Whitelisted minted: ", Strings.toString(mintId));
-    // }
+    //function for whitelist minting
+    function whitelistMint(address customerAddress, uint8 gemstoneType) public payable {
+        address[] storage whitelist = bundleWhitelist[Types.GemstoneType(gemstoneType)];
+        bool isWL = false;
+        for (uint8 i = 0; i < whitelist.length; i++) {
+            if(whitelist[i] == customerAddress) {
+                isWL = true;
+            }
+        }
+        require(isWL == true, "Address does not have whitelist for this gemstone type");  //check if whitelist exists for this gemstone type
+        require(isGemstoneAvailable(gemstoneType), "Gemstone not available"); //check if gemstone is available for minting
+        require(
+            !isGemstoneMinted(customerAddress, gemstoneType),
+            "Gemstone not minted");  //check if gemstone type has been minted by a specific customeraddress
+        uint8 gemId = recordPurchase(customerAddress, gemstoneType);  //mint of gemstone is recorded in mapping
+        uint8 mintId = gemstoneType * 50 + gemId;
+        addToRedeemedWithDefault(mintId);
+        _mint(customerAddress, mintId, 1, "");
+        console.log("Whitelisted minted: ", Strings.toString(mintId));
+    }
 
-    // function getOwner() public view returns (address) {
-    //     return getOwnerAddress();
-    // }
+    function getOwner() public view returns (address) {
+        return getOwnerAddress();
+    }
 
     function getPurchasesOfCustomer(address customerAddress)
         public
