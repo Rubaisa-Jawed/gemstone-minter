@@ -47,7 +47,7 @@ contract Gemstone {
         return lastMinted + 1;
     }
 
-    //TODO need to add a check that checks if the address already has whitelist for a certain gemstone type
+    //Adds Address to WL
     function addToWhitelist(address customerAddress, uint8 gemType) internal {
         address[] storage whitelist = bundleWhitelist[Types.GemstoneType(gemType)];
         if(whitelist.length == 0) {
