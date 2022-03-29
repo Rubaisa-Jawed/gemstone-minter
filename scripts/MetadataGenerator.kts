@@ -3,23 +3,24 @@ import java.lang.System;
 
 fun getGemForId(id: Int): String{
     return when(id){
-        0-> "Azure"
-        1-> "Lapis"
-        2-> "Saphirre"
-        3-> "Emerald"
-        4-> "Ruby"
-        5-> "Diamond"
+        0-> "Amethyst"
+        1-> "Sapphire"
+        2-> "Emerald"
+        3-> "Citrine"
+        4-> "Amber"
+        5-> "Ruby"
         6-> "Goblet"
         else -> ""
     }
 }
 
 fun getMetadataForId(id: Int, gemType: Int, isRedeemed: Boolean): String{
-    var json = "{\"id\":\"${id}\",\"description\":\"${getGemForId(gemType)} #${id}is a token minted on purchase of a case." +
+    var json = "{\"id\":\"${id}\",\"description\":\"${getGemForId(gemType)} #${id} is a token minted on purchase of a case." +
             " Collect all 6 tokens to be eligible to get the Goblet\"," +
             "\"external_url\":\"https://www.maltgraincane.com/\"," +
-            "\"image\":\"ipfs://QmPAT6h5smsTX57PSvsB86zXUTgodzu8dchcV9AjhkvyUK/${id}.svg\"," +
-            "\"name\":\"MultiGrain & Cane Whiskey ${getGemForId(gemType)}#${id}\"," +
+            "\"seller_fee_basis_points\":1000," +
+            "\"image\":\"ipfs://QmQKedjazARTj4QPpUwWkRhxLBXm1mTwJzSctwyp9U5uzg/${id}.svg\"," +
+            "\"name\":\"MultiGrain & Cane Whiskey ${getGemForId(gemType)} #${id}\"," +
             "\"attributes\":[{\"trait_type\": \"IsRedeemed\", \"value\": \"${isRedeemed}\"}]}"
     return json
 }

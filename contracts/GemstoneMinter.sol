@@ -10,7 +10,7 @@ import {Types} from "./libs/Types.sol";
 contract GemstoneMinter is Gemstone, ERC1155 {
     constructor()
         ERC1155(
-            "ipfs://QmcjzQsiFaCLmvvgsjLwqRc7nEc5nUjavVD5u7WAn31MkZ/{id}.json"
+            "ipfs://QmeezXGkkgumJJZv3eKDAvAV7BAxZSqZBTKm5gV4iewoFa/{id}.json"
         )
     {
         console.log("Init GemstoneMinter success");
@@ -75,10 +75,10 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     function uri(uint256 id) public view override returns (string memory) {
         if (isGemRedeemedForId(uint8(id))) {
             return
-                "ipfs://QmWo3zWi7a2PjEg43KaPCnaRqp3F9JxHTMFc7ejhKXsReF/{id}.json"; //Not redeemed ipfs
+                "ipfs://QmeezXGkkgumJJZv3eKDAvAV7BAxZSqZBTKm5gV4iewoFa/{id}.json"; //Not redeemed ipfs
         } else {
             return
-                "ipfs://QmNW6jFna4EFfsvRBuoYy3PatnaEwVLB19P2D7Tyj5H6CH/{id}.json"; //Redeemed ipfs
+                "ipfs://QmQC1UXcJ7i8kiND2Tdfwmr12PsdPV5Q8VGazFddt4fpeo/{id}.json"; //Redeemed ipfs
         }
     }
 
