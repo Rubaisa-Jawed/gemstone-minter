@@ -23,8 +23,8 @@ contract GemstoneMinter is Gemstone, ERC1155, Ownable {
         require(
             !isGemstoneMinted(customerAddress, gemstoneType),
             "Gemstone already minted"
-        );  //check if gemstone type has been minted by a specific customeraddress
-        uint8 gemId = recordPurchase(customerAddress, gemstoneType);  //mint of gemstone is recorded in mapping
+        ); //check if gemstone type has been minted by a specific customeraddress
+        uint8 gemId = recordPurchase(customerAddress, gemstoneType); //mint of gemstone is recorded in mapping
         uint8 mintId = gemstoneType * 100 + gemId;
         addToRedeemedWithDefault(mintId);
         _mint(customerAddress, mintId, 1, "");
@@ -32,7 +32,14 @@ contract GemstoneMinter is Gemstone, ERC1155, Ownable {
     }
 
     //function for adding address to whitelist for specific gemstone types
-   
+    function addAddressToWhitelist(address customerAddress, uint8 gemstoneType)
+        public
+        onlyOwner
+    {
+        require(gemstoneType >= 0 && gemstoneType <= uint8(Types.GemstoneType.Diamond), "Gemstone does not exist");
+        addToWhitelist(customerAddress, gemstoneType);
+    }
+
     //function for whitelist minting(incomplete; need to discuss)
     // function whitelistMint(address customerAddress, uint8 gemstoneType) public {
     //     require(
@@ -51,9 +58,9 @@ contract GemstoneMinter is Gemstone, ERC1155, Ownable {
     //     console.log("Whitelisted minted: ", Strings.toString(mintId));
     // }
 
-    function getOwner() public view returns (address) {
-        return getOwnerAddress();
-    }
+    // function getOwner() public view returns (address) {
+    //     return getOwnerAddress();
+    // }
 
     function getPurchasesOfCustomer(address customerAddress)
         public

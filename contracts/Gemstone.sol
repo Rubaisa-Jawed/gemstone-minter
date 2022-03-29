@@ -6,8 +6,7 @@ import {Types} from "./libs/Types.sol";
 
 contract Gemstone {
     //State vars:
-    address owner;
-    //should we make it address => Types.GemstoneType[]?
+    // address owner;
     mapping(Types.GemstoneType => address[]) bundleWhitelist; //For reference
     mapping(address => Types.PurchaseInfo[]) purchases;
     Types.Gemstone[] gemstones;
@@ -15,7 +14,7 @@ contract Gemstone {
     uint256 constant VALIDITY_PERIOD = 31556952; //1 year
 
     constructor() {
-        owner = msg.sender;
+        // owner = msg.sender;
         initBundleWhitelist();
         initGemstones();
         console.log("Init Gemstone success at", block.timestamp);
@@ -45,9 +44,17 @@ contract Gemstone {
 
     //TODO need to add a check that checks if the address already has whitelist for a certain gemstone type
     function addToWhitelist(address customerAddress, uint8 gemType) internal {
-        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Diamond));
-        bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        address[] storage whitelist = bundleWhitelist[Types.GemstoneType(gemType)];
+        if(whitelist.length == 0) {
+            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        } else {
+            for (uint8 i = 0; i < whitelist.length; i++) {
+                require(whitelist[i] != customerAddress, "Address already in whitelist");
+                }
+            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        }
     }
+        
 
     function addToRedeemedWithDefault(uint8 gemType) internal {
         redeemedList[gemType] = 0;
@@ -159,9 +166,9 @@ contract Gemstone {
         gemstones.push(Types.Gemstone(Types.GemstoneType.Goblet, 50, 0));
     }
 
-    function getOwnerAddress() internal view returns (address) {
-        return owner;
-    }
+    // function getOwnerAddress() internal view returns (address) {
+    //     return owner;
+    // }
 
     //Goblet fns
     function addGobletIfEligible(address customerAddress) internal {
