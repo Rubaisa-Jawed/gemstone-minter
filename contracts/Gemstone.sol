@@ -58,6 +58,8 @@ contract Gemstone {
 
     /*
         Add address to whitelist for a gemstone type
+        Adds to purchases
+        Update last minted in gemstones
         @param customerAddress address of customer
         @param gemstoneType gemstone type
 
@@ -87,6 +89,11 @@ contract Gemstone {
         return lastMinted + 1;
     }
 
+    /*
+        Add address to whitelist for a gemstone type
+        @param customerAddress address of customer
+        @param gemstoneType gemstone type
+    */
     function addToWhitelist(address customerAddress, uint8 gemType) internal {
         require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Ruby));
         bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
@@ -96,6 +103,11 @@ contract Gemstone {
         redeemedList[gemType] = 0;
     }
 
+    /*
+        Add customer address to lookup table
+        Adds only unique customer addresses
+        @param customerAddress address of customer
+    */
     function addToCustomerLookupTable(address customerAddress) internal {
         //Dont push if already exists
         for (uint64 i = 0; i < customerAddresses.length; i++) {
@@ -107,10 +119,16 @@ contract Gemstone {
     }
 
     //Reads
+
+    //Returns if the gemstone last minted is less than supply
+    //@param gemstoneType gemstone type
     function isGemstoneAvailable(uint8 gemType) public view returns (bool) {
         return gemstones[gemType].lastMintedId < gemstones[gemType].supply - 1;
     }
 
+    //Returns if the gemstone was minted for the customer
+    //@param customerAddress address of customer
+    //@param gemId gemstone type
     function isGemstoneMinted(address customerAddress, uint8 gemType)
         public
         view
@@ -128,6 +146,13 @@ contract Gemstone {
         return isMinted;
     }
 
+    /*
+        Returns if the user has 6 gemstones redeemable
+        Redeemable is true in 2 conditions
+        1. The gemstone is not redeemed
+        2. The gemstone is redeemed but past the validity period
+        @param customerAddress customer address
+    */
     function isEligibleToMintGoblet(address customerAddress)
         public
         view
@@ -146,6 +171,7 @@ contract Gemstone {
         return validGemCount == 6;
     }
 
+    //Returns if the gemstone is redeemed for the ID. This is used to serve different URI
     function isGemRedeemedForId(uint8 gemId) internal view returns (bool) {
         console.log(redeemedList[gemId]);
         if (redeemedList[gemId] == 0) return false;
@@ -154,32 +180,7 @@ contract Gemstone {
         else return true;
     }
 
-    function getGemstoneType(uint8 gemId) internal pure returns (uint8) {
-        if (gemId > 0 && gemId <= uint8(Types.GemstoneType.Amethyst) * 100 + 50)
-            return uint8(Types.GemstoneType.Amethyst);
-        else if (
-            gemId > uint8(Types.GemstoneType.Amethyst) * 100 + 100 &&
-            gemId <= uint8(Types.GemstoneType.Sapphire) * 100 + 50
-        ) return uint8(Types.GemstoneType.Sapphire);
-        else if (
-            gemId > uint8(Types.GemstoneType.Sapphire) * 100 + 100 &&
-            gemId <= uint8(Types.GemstoneType.Emerald) * 100 + 50
-        ) return uint8(Types.GemstoneType.Emerald);
-        else if (
-            gemId > uint8(Types.GemstoneType.Emerald) * 100 + 100 &&
-            gemId <= uint8(Types.GemstoneType.Citrine) * 100 + 50
-        ) return uint8(Types.GemstoneType.Citrine);
-        else if (
-            gemId > uint8(Types.GemstoneType.Citrine) * 100 + 100 &&
-            gemId <= uint8(Types.GemstoneType.Amber) * 100 + 50
-        ) return uint8(Types.GemstoneType.Amber);
-        else if (
-            gemId > uint8(Types.GemstoneType.Amber) * 100 + 100 &&
-            gemId <= uint8(Types.GemstoneType.Ruby) * 100 + 50
-        ) return uint8(Types.GemstoneType.Ruby);
-        else return uint8(Types.GemstoneType.Amethyst);
-    }
-
+    //Returns purchases of customer
     function getPurchasesOfUser(address customerAddress)
         internal
         view
@@ -188,6 +189,7 @@ contract Gemstone {
         return purchases[customerAddress];
     }
 
+    //Returns all customer addresses
     function getAddressesOfAllCustomers()
         internal
         view
@@ -196,6 +198,7 @@ contract Gemstone {
         return customerAddresses;
     }
 
+    //Get total number of purchases
     function getTotalNumberOfPurchases() internal view returns (uint256) {
         uint256 total = 0;
         for (uint256 i = 0; i < customerAddresses.length; i++) {
@@ -204,6 +207,7 @@ contract Gemstone {
         return total;
     }
 
+    //Get all purchases
     function getPurchases()
         internal
         view
@@ -227,10 +231,6 @@ contract Gemstone {
         }
         return purchaseInfos;
     }
-
-    //TODO - add a function to get whitelist of a particular gemstone type
-    //TODO - add a function to get all purchases
-    //TODO - add a function to get supply left for a specific gemstone type
 
     //Inititalisers
     function initBundleWhitelist() internal {
@@ -256,6 +256,12 @@ contract Gemstone {
     }
 
     //Functions exposed for goblet contract
+
+    /*
+        Checks if customer is eligible to Mint a goblet
+        Updates the purchase status as redeemed for each gemstone if true
+        @param customerAddress address of customer
+    */
     function redeemPurchasesForGoblet(address customerAddress)
         internal
         returns (bool)
