@@ -28,7 +28,11 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         100-150 for gemstone type 1
         ...
     */
-    function mint(address customerAddress, uint8 gemstoneType) public payable {
+    function mint(address customerAddress, uint8 gemstoneType)
+        public
+        payable
+        onlyOwner
+    {
         require(isGemstoneAvailable(gemstoneType), "Gemstone not available");
         require(
             !isGemstoneMinted(customerAddress, gemstoneType),
@@ -90,7 +94,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         Range of gemstone type is defined in Types.sol (0..5)
     */
     function uri(uint256 id) public view override returns (string memory) {
-        if (isGemRedeemedForId(uint8(id))) {
+        if (!isGemRedeemedForId(uint8(id))) {
             return
                 string(
                     abi.encodePacked(
@@ -115,6 +119,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     //Not required here
     function redeemGemstoneExperimental(address customerAddress, uint8 gemId)
         public
+        onlyOwner
     {
         redeemGemstone(customerAddress, gemId);
     }

@@ -34,7 +34,6 @@ describe("GemstoneMinter", function () {
     await mintTx2.wait();
 
     const uri2 = await gemstoneMinter.uri(200);
-    console.log(uri2);
 
     expect(redeemedUri).to.not.equal(uri);
   });

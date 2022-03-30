@@ -9,7 +9,6 @@ fun getGemForId(id: Int): String{
         3-> "Citrine"
         4-> "Amber"
         5-> "Ruby"
-        6-> "Goblet"
         else -> ""
     }
 }
