@@ -23,7 +23,7 @@ contract Gemstone {
     mapping(address => Types.PurchaseInfo[]) purchases;
 
     /*
-        Lookup table for customer addresses and that purchased gemstones
+        Lookup table for customer addresses and that purchased gemstones and minted
     */
     address[] customerAddresses;
 
@@ -95,8 +95,24 @@ contract Gemstone {
         @param gemstoneType gemstone type
     */
     function addToWhitelist(address customerAddress, uint8 gemType) internal {
-        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Ruby));
-        bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        require(
+            (gemType >= 0 && gemType <= uint8(Types.GemstoneType.Ruby)),
+            "Gemstone does not exist"
+        );
+        address[] storage whitelist = bundleWhitelist[
+            Types.GemstoneType(gemType)
+        ];
+        if (whitelist.length == 0) {
+            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        } else {
+            for (uint8 i = 0; i < whitelist.length; i++) {
+                require(
+                    whitelist[i] != customerAddress,
+                    "Address already in whitelist"
+                );
+            }
+            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        }
     }
 
     function addToRedeemedWithDefault(uint8 gemType) internal {
@@ -119,6 +135,29 @@ contract Gemstone {
     }
 
     //Reads
+
+    /*
+        Check if customer has been whitelisted
+    */
+    function isCustomerWhiteListed(address customerAddress, uint8 gemstoneType)
+        internal
+        view
+        returns (bool)
+    {
+        require(
+            gemstoneType >= 0 && gemstoneType <= uint8(Types.GemstoneType.Ruby)
+        );
+        address[] storage whitelist = bundleWhitelist[
+            Types.GemstoneType(gemstoneType)
+        ];
+        bool isWL = false;
+        for (uint8 i = 0; i < whitelist.length; i++) {
+            if (whitelist[i] == customerAddress) {
+                isWL = true;
+            }
+        }
+        return isWL;
+    }
 
     //Returns if the gemstone last minted is less than supply
     //@param gemstoneType gemstone type

@@ -57,7 +57,7 @@ fun main() {
     System.out.println("Working Directory = " + dir);
     for(i in 0..5){
         for (j in 1..50){
-            writeToFile(dir, getGenericSvgForId(j,i), (i*100+j).toString())
+            writeToFile(dir, getGenericSvgForId(j,i), (i*50+j).toString())
         }
     }
 }

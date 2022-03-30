@@ -21,26 +21,16 @@ async function main() {
 
   console.log("GemstoneMinter deployed to:", gemstoneMinter.address);
 
-  const mintTx = await gemstoneMinter.mint(
-    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
-    0
-  );
-  await mintTx.wait();
+  // await gemstoneMinter.addAddressToWhitelist(
+  //   "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
+  //   1
+  // );
 
-  const redeemTx = await gemstoneMinter.redeemGemstoneExperimental(
-    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
-    101
-  );
-  await redeemTx.wait();
-
-  const redeemedUri = await gemstoneMinter.uri(101);
-  console.log("redeemed", redeemedUri);
-
-  const mintTx2 = await gemstoneMinter.mint(
-    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
-    1
-  );
-  await mintTx2.wait();
+  // const mintTx = await gemstoneMinter.whitelistMint(
+  //   "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
+  //   0
+  // );
+  // await mintTx.wait();
 
   console.log("Everything seems to have happened correctly");
 }

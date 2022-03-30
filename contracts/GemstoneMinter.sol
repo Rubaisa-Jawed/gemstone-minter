@@ -17,8 +17,16 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         _;
     }
 
+    //function for adding address to whitelist for specific gemstone types
+    function addAddressToWhitelist(address customerAddress, uint8 gemstoneType)
+        public
+        onlyOwner
+    {
+        addToWhitelist(customerAddress, gemstoneType);
+    }
+
     /*
-        Add address to whitelist for a gemstone type and purchase the gemstone for address
+        Mark as purchased the gemstone for address
         @param customerAddress address of customer
         @param gemstoneType gemstone type
         Range of gemstone type is defined in Types.sol (0..5)
@@ -28,22 +36,34 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         100-150 for gemstone type 1
         ...
     */
-    function mint(address customerAddress, uint8 gemstoneType)
+    //function for whitelist minting
+    function whitelistMint(address customerAddress, uint8 gemstoneType)
         public
         payable
-        onlyOwner
     {
+        //check if whitelist exists for this gemstone type
+        bool isWL = isCustomerWhiteListed(customerAddress, gemstoneType);
+        require(isWL, "Address does not have whitelist for this gemstone type");
+
+        //check if gemstone is available for minting
         require(isGemstoneAvailable(gemstoneType), "Gemstone not available");
+
+        //check if gemstone type has been minted by a specific customeraddress
         require(
             !isGemstoneMinted(customerAddress, gemstoneType),
-            "Gemstone already minted"
+            "Gemstone not minted"
         );
-        addToWhitelist(customerAddress, gemstoneType);
+
+        //mint of gemstone is recorded in mapping
         uint8 gemId = recordPurchase(customerAddress, gemstoneType);
-        uint8 mintId = gemstoneType * 100 + gemId;
+        uint8 mintId = gemstoneType * 50 + gemId;
+
+        //Set redeemed as false by default
         addToRedeemedWithDefault(mintId);
+
+        //Mint
         _mint(customerAddress, mintId, 1, "");
-        console.log("Minted: ", Strings.toString(mintId));
+        console.log("Whitelisted minted: ", Strings.toString(mintId));
     }
 
     /*
@@ -98,7 +118,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmZAUTZMnabb2Q4qi7eoAhjUn3imSK6bpKHrA3qpe3Xo7i/",
+                        "ipfs://QmY2tkUPfNqHXH6SsVYg5fDJZKivKGqQC8TxVGpPKigJWp/",
                         Strings.toString(id),
                         ".json"
                     )
@@ -107,7 +127,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmcsNr2hgitfpCrcUATsanPyxGf2RXbRzkFPczRSKD9fbz/",
+                        "ipfs://QmV5UyovXxbWaR3oibVsx9o3qCsbYdHaiQB9Sp6fbPKBNh/",
                         Strings.toString(id),
                         ".json"
                     )
