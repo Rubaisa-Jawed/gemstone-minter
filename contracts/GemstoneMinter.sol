@@ -16,54 +16,56 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         console.log("Init GemstoneMinter success");
     }
 
-    //main function for public minting
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
+    }
+
+    /*
+        Add address to whitelist for a gemstone type and purchase the gemstone for address
+        @param customerAddress address of customer
+        @param gemstoneType gemstone type
+        Range of gemstone type is defined in Types.sol (0..5)
+        Sets redeemed as false by default
+        The mint id is by series of increasing id, matching the metadata
+        0-50 for gemstone type 0
+        100-150 for gemstone type 1
+        ...
+    */
     function mint(address customerAddress, uint8 gemstoneType) public payable {
-        require(isGemstoneAvailable(gemstoneType), "Gemstone not available"); //check if gemstone is available for minting
+        require(isGemstoneAvailable(gemstoneType), "Gemstone not available");
         require(
             !isGemstoneMinted(customerAddress, gemstoneType),
             "Gemstone already minted"
-        ); //check if gemstone type has been minted by a specific customeraddress
-        uint8 gemId = recordPurchase(customerAddress, gemstoneType); //mint of gemstone is recorded in mapping
-        uint8 mintId = gemstoneType * 50 + gemId;
+        );
+        addToWhitelist(customerAddress, gemstoneType);
+        uint8 gemId = recordPurchase(customerAddress, gemstoneType);
+        uint8 mintId = gemstoneType * 100 + gemId;
         addToRedeemedWithDefault(mintId);
         _mint(customerAddress, mintId, 1, "");
         console.log("Minted: ", Strings.toString(mintId));
     }
 
-    //function for adding address to whitelist for specific gemstone types
-    function addAddressToWhitelist(address customerAddress, uint8 gemstoneType)
+    /*
+        Public function to be called by contract owner to mint a goblet
+        It returns true after setting all the gemstones as redeemed
+        False if user fails condition to mint goblet
+    */
+    function redeemGemstonesForGoblet(address customerAddress)
         public
-        onlyOwner
+        returns (bool)
     {
-        require(gemstoneType >= 0 && gemstoneType <= uint8(Types.GemstoneType.Diamond), "Gemstone does not exist");
-        addToWhitelist(customerAddress, gemstoneType);
+        return redeemPurchasesForGoblet(customerAddress);
     }
 
-    //function for whitelist minting
-    function whitelistMint(address customerAddress, uint8 gemstoneType) public payable {
-        address[] storage whitelist = bundleWhitelist[Types.GemstoneType(gemstoneType)];
-        bool isWL = false;
-        for (uint8 i = 0; i < whitelist.length; i++) {
-            if(whitelist[i] == customerAddress) {
-                isWL = true;
-            }
-        }
-        require(isWL == true, "Address does not have whitelist for this gemstone type");  //check if whitelist exists for this gemstone type
-        require(isGemstoneAvailable(gemstoneType), "Gemstone not available"); //check if gemstone is available for minting
-        require(
-            !isGemstoneMinted(customerAddress, gemstoneType),
-            "Gemstone not minted");  //check if gemstone type has been minted by a specific customeraddress
-        uint8 gemId = recordPurchase(customerAddress, gemstoneType);  //mint of gemstone is recorded in mapping
-        uint8 mintId = gemstoneType * 50 + gemId;
-        addToRedeemedWithDefault(mintId);
-        _mint(customerAddress, mintId, 1, "");
-        console.log("Whitelisted minted: ", Strings.toString(mintId));
-    }
+    //View fns
 
     function getOwner() public view returns (address) {
         return getOwnerAddress();
     }
 
+    //Returns purchases for a customer
+    //Adding for future use by contract #2
     function getPurchasesOfCustomer(address customerAddress)
         public
         view
@@ -72,13 +74,44 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         return getPurchasesOfUser(customerAddress);
     }
 
+    //Returns purchases for the contract
+    //Adding for future use by contract #2
+    function getAllPurchases()
+        public
+        view
+        returns (Types.PurchaseInfo[] memory purchaseInfos)
+    {
+        return getPurchases();
+    }
+
+    /*
+        Returns uri for marketplaces
+        We maintain 2 stores for metadata
+        #1 For redeemed (Will be returned for items which are not redeemed)
+        #2 For unredeemed (Default state)
+        @param customerAddress address of customer
+        @param gemstoneType gemstone type
+        Range of gemstone type is defined in Types.sol (0..5)
+    */
     function uri(uint256 id) public view override returns (string memory) {
         if (isGemRedeemedForId(uint8(id))) {
             return
-                "ipfs://QmeezXGkkgumJJZv3eKDAvAV7BAxZSqZBTKm5gV4iewoFa/{id}.json"; //Not redeemed ipfs
+                string(
+                    abi.encodePacked(
+                        "ipfs://QmeezXGkkgumJJZv3eKDAvAV7BAxZSqZBTKm5gV4iewoFa/",
+                        Strings.toString(id),
+                        ".json"
+                    )
+                ); //Not redeemed ipfs
         } else {
             return
-                "ipfs://QmQC1UXcJ7i8kiND2Tdfwmr12PsdPV5Q8VGazFddt4fpeo/{id}.json"; //Redeemed ipfs
+                string(
+                    abi.encodePacked(
+                        "ipfs://QmQC1UXcJ7i8kiND2Tdfwmr12PsdPV5Q8VGazFddt4fpeo/",
+                        Strings.toString(id),
+                        ".json"
+                    )
+                ); //Redeemed ipfs
         }
     }
 

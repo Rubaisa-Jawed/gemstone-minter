@@ -15,83 +15,99 @@ describe("GemstoneMinter", function () {
     await gemstoneMinter.deployed();
   });
 
-  // it("Should execute", async function () {
-  //   expect(await gemstoneMinter.getOwner()).to.equal(owner.address);
+  it("Should print 2 different URIs", async function () {
+    expect(await gemstoneMinter.getOwner()).to.equal(owner.address);
 
-  //   const mintTx = await gemstoneMinter.mint(addr1.address, 1);
-  //   await mintTx.wait();
+    const mintTx = await gemstoneMinter.mint(addr1.address, 1);
+    await mintTx.wait();
 
-  //   const purchases = await gemstoneMinter.getPurchasesOfCustomer(
-  //     addr1.address
-  //   );
-  //   //console.log(purchases);
+    const uri = await gemstoneMinter.uri(101);
 
-  //   const uri = await gemstoneMinter.uri(101);
-  //   console.log("non-redeemed", uri);
+    const redeemTx = await gemstoneMinter.redeemGemstoneExperimental(
+      addr1.address,
+      101
+    );
+    await redeemTx.wait();
 
-  //   const redeemTx = await gemstoneMinter.redeemGemstoneExperimental(
-  //     addr1.address,
-  //     101
-  //   );
-  //   await redeemTx.wait();
+    const redeemedUri = await gemstoneMinter.uri(101);
+    const mintTx2 = await gemstoneMinter.mint(addr1.address, 2);
+    await mintTx2.wait();
 
-  //   const redeemedUri = await gemstoneMinter.uri(101);
-  //   console.log("redeemed", redeemedUri);
+    const uri2 = await gemstoneMinter.uri(200);
+    console.log(uri2);
 
-  //   const mintTx2 = await gemstoneMinter.mint(addr1.address, 2);
-  //   await mintTx2.wait();
-
-  //   const uri2 = await gemstoneMinter.uri(200);
-  //   console.log(uri2);
-  // });
-
-  it("Should whitelist an address", async function () {
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
+    expect(redeemedUri).to.not.equal(uri);
   });
 
-  it("Should whitelist address for different gemstones", async function () {
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 2);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
-  });
+  it("Should get purchases correctly", async function () {
+    const mintTx = await gemstoneMinter.mint(addr1.address, 1);
+    await mintTx.wait();
 
-  it("Should whitelist address for different gemstones", async function () {
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 2);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
-  });
+    const purchasesOfCust1 = await gemstoneMinter.getPurchasesOfCustomer(
+      addr1.address
+    );
 
-  it("Should fail as whitelist address already exists", async function () {
-    await gemstoneMinter.addAddressToWhitelist(addr1.address, 1);
-    await expect(
-      gemstoneMinter.addAddressToWhitelist(addr1.address, 1)
-    ).to.be.revertedWith("Address already in whitelist");
-  });
+    const mintTx2 = await gemstoneMinter.mint(addr2.address, 2);
+    await mintTx2.wait();
 
-  it("Should fail as Gemstone does not exist", async function () {
-    await expect(
-      gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 6)
-    ).to.be.revertedWith("Gemstone does not exist");
-  });
+    const purchasesOfCust2 = await gemstoneMinter.getPurchasesOfCustomer(
+      addr1.address
+    );
 
-  it("Should allow a Whitelist Address to mint a Gemstone", async function () {
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
-    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr2.address, 5);
-    await gemstoneMinter.connect(addr2).whitelistMint(addr2.address, 5);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr3.address, 5);
-    await gemstoneMinter.connect(addr3).whitelistMint(addr3.address, 5);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr4.address, 5);
-  });
+    const allPurchases = await gemstoneMinter.getAllPurchases();
 
-  it("Should not allow a non Whitelist Address to mint a Gemstone", async function () {
-    await expect(
-      gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4)
-    ).to.be.revertedWith(
-      "Address does not have whitelist for this gemstone type"
+    expect(purchasesOfCust1.length + purchasesOfCust2.length).to.equal(
+      allPurchases.length
     );
   });
+
+  //   it("Should whitelist an address", async function () {
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
+  //   });
+
+  //   it("Should whitelist address for different gemstones", async function () {
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 2);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
+  //   });
+
+  //   it("Should whitelist address for different gemstones", async function () {
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 2);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
+  //   });
+
+  //   it("Should fail as whitelist address already exists", async function () {
+  //     await gemstoneMinter.addAddressToWhitelist(addr1.address, 1);
+  //     await expect(
+  //       gemstoneMinter.addAddressToWhitelist(addr1.address, 1)
+  //     ).to.be.revertedWith("Address already in whitelist");
+  //   });
+
+  //   it("Should fail as Gemstone does not exist", async function () {
+  //     await expect(
+  //       gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 6)
+  //     ).to.be.revertedWith("Gemstone does not exist");
+  //   });
+
+  //   it("Should allow a Whitelist Address to mint a Gemstone", async function () {
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
+  //     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr2.address, 5);
+  //     await gemstoneMinter.connect(addr2).whitelistMint(addr2.address, 5);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr3.address, 5);
+  //     await gemstoneMinter.connect(addr3).whitelistMint(addr3.address, 5);
+  //     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr4.address, 5);
+  //   });
+
+  //   it("Should not allow a non Whitelist Address to mint a Gemstone", async function () {
+  //     await expect(
+  //       gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4)
+  //     ).to.be.revertedWith(
+  //       "Address does not have whitelist for this gemstone type"
+  //     );
+  //   });
 });

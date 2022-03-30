@@ -19,9 +19,11 @@ async function main() {
 
   await gemstoneMinter.deployed();
 
+  console.log("GemstoneMinter deployed to:", gemstoneMinter.address);
+
   const mintTx = await gemstoneMinter.mint(
     "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
-    1
+    0
   );
   await mintTx.wait();
 
@@ -35,12 +37,12 @@ async function main() {
   console.log("redeemed", redeemedUri);
 
   const mintTx2 = await gemstoneMinter.mint(
-    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
-    2
+    "0x80a1e599327f341d89075bD502ED0b6EbBD84ae2",
+    1
   );
   await mintTx2.wait();
 
-  console.log("GemstoneMinter deployed to:", gemstoneMinter.address);
+  console.log("Everything seems to have happened correctly");
 }
 
 // We recommend this pattern to be able to use async/await everywhere
