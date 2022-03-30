@@ -8,11 +8,7 @@ import "./Gemstone.sol";
 import {Types} from "./libs/Types.sol";
 
 contract GemstoneMinter is Gemstone, ERC1155 {
-    constructor()
-        ERC1155(
-            "ipfs://QmeezXGkkgumJJZv3eKDAvAV7BAxZSqZBTKm5gV4iewoFa/{id}.json"
-        )
-    {
+    constructor() ERC1155("") {
         console.log("Init GemstoneMinter success");
     }
 
@@ -98,7 +94,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmeezXGkkgumJJZv3eKDAvAV7BAxZSqZBTKm5gV4iewoFa/",
+                        "ipfs://QmZAUTZMnabb2Q4qi7eoAhjUn3imSK6bpKHrA3qpe3Xo7i/",
                         Strings.toString(id),
                         ".json"
                     )
@@ -107,7 +103,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmQC1UXcJ7i8kiND2Tdfwmr12PsdPV5Q8VGazFddt4fpeo/",
+                        "ipfs://QmcsNr2hgitfpCrcUATsanPyxGf2RXbRzkFPczRSKD9fbz/",
                         Strings.toString(id),
                         ".json"
                     )

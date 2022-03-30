@@ -42,9 +42,10 @@ fun generateMetadataNotRedeemed() {
     for(i in 0..5){
         for (j in 1..50){
             //val fileName = java.lang.Integer.toHexString(i*100+j);
-            var fileName = String.format("0x%064X", i*100+j);
-            fileName = fileName.replace("0x","").lowercase()
-            writeToFile(dir, getMetadataForId(j, i, false), fileName)
+            //var fileName = String.format("0x%064X", i*100+j);
+            //val fileName = fileName.replace("0x","").lowercase()
+            val fileName= i*100+j;
+            writeToFile(dir, getMetadataForId(i*100+j, i, false), fileName.toString())
         }
     }
 }
@@ -55,9 +56,8 @@ fun generateMetadataRedeemed() {
     for(i in 0..5){
         for (j in 1..50){
             //val fileName = java.lang.Integer.toHexString(i*100+j);
-            var fileName = String.format("0x%064X", i*100+j);
-            fileName = fileName.replace("0x","").lowercase()
-            writeToFile(dir, getMetadataForId(j, i, true), fileName)
+            var fileName = i*100+j;
+            writeToFile(dir, getMetadataForId(i*100+j, i, true), fileName.toString())
         }
     }
 }

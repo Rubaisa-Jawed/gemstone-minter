@@ -37,7 +37,7 @@ async function main() {
   console.log("redeemed", redeemedUri);
 
   const mintTx2 = await gemstoneMinter.mint(
-    "0x80a1e599327f341d89075bD502ED0b6EbBD84ae2",
+    "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
     1
   );
   await mintTx2.wait();

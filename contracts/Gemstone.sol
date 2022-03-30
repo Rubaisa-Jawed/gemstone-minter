@@ -147,6 +147,7 @@ contract Gemstone {
     }
 
     function isGemRedeemedForId(uint8 gemId) internal view returns (bool) {
+        console.log(redeemedList[gemId]);
         if (redeemedList[gemId] == 0) return false;
         else if (block.timestamp > redeemedList[gemId] + VALIDITY_PERIOD)
             return false;
