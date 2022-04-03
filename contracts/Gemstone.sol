@@ -5,8 +5,24 @@ import "hardhat/console.sol";
 import {Types} from "./libs/Types.sol";
 
 contract Gemstone {
+    /*
+        Validity of gemstone until it can be redeemed once again
+    */
+    uint256 constant VALIDITY_PERIOD = 31556952; //1 year
+
     //Owner address
     address owner;
+
+    /*
+        Lookup table for customer addresses and that purchased gemstones and minted
+    */
+    address[] customerAddresses;
+
+    /*
+        A mapping that maintains last minted gemstone id for each gemstone type
+        It also defines total supply for each
+    */
+    Types.Gemstone[] gemstones;
 
     /*
         Maintain address whitelist for each gemstone type
@@ -23,28 +39,12 @@ contract Gemstone {
     mapping(address => Types.PurchaseInfo[]) purchases;
 
     /*
-        Lookup table for customer addresses and that purchased gemstones and minted
-    */
-    address[] customerAddresses;
-
-    /*
-        A mapping that maintains last minted gemstone id for each gemstone type
-        It also defines total supply for each
-    */
-    Types.Gemstone[] gemstones;
-
-    /*
         The source of truth for redeemed gemstone id for easier querying
         Key is gemstone id, value is true if the gemstone is redeemed
         Not redeemed state = 0
         Redeemed state = VALID TIMESTAMP
     */
-    mapping(uint8 => uint256) redeemedList;
-
-    /*
-        Validity of gemstone until it can be redeemed once again
-    */
-    uint256 constant VALIDITY_PERIOD = 31556952; //1 year
+    mapping(uint256 => uint256) redeemedList;
 
     //Initialise supplies, store owner address to access laters
     constructor() {
@@ -67,15 +67,15 @@ contract Gemstone {
 
         Returns the gemId of the gemstone that is last minted
     */
-    function recordPurchase(address customerAddress, uint8 gemType)
+    function recordPurchase(address customerAddress, uint256 gemType)
         internal
-        returns (uint8 gemId)
+        returns (uint256 gemId)
     {
-        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Ruby));
+        require(gemType >= 0 && gemType <= uint256(Types.GemstoneType.Ruby));
         require(
             gemstones[gemType].lastMintedId < gemstones[gemType].supply - 1
         );
-        uint8 lastMinted = gemstones[gemType].lastMintedId;
+        uint256 lastMinted = gemstones[gemType].lastMintedId;
         Types.PurchaseInfo memory newPurchase = Types.PurchaseInfo(
             Types.GemstoneType(gemType),
             lastMinted + 1,
@@ -94,9 +94,9 @@ contract Gemstone {
         @param customerAddress address of customer
         @param gemstoneType gemstone type
     */
-    function addToWhitelist(address customerAddress, uint8 gemType) internal {
+    function addToWhitelist(address customerAddress, uint256 gemType) internal {
         require(
-            (gemType >= 0 && gemType <= uint8(Types.GemstoneType.Ruby)),
+            (gemType >= 0 && gemType <= uint256(Types.GemstoneType.Ruby)),
             "Gemstone does not exist"
         );
         address[] storage whitelist = bundleWhitelist[
@@ -105,7 +105,7 @@ contract Gemstone {
         if (whitelist.length == 0) {
             bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
         } else {
-            for (uint8 i = 0; i < whitelist.length; i++) {
+            for (uint256 i = 0; i < whitelist.length; i++) {
                 require(
                     whitelist[i] != customerAddress,
                     "Address already in whitelist"
@@ -115,7 +115,7 @@ contract Gemstone {
         }
     }
 
-    function addToRedeemedWithDefault(uint8 gemType) internal {
+    function addToRedeemedWithDefault(uint256 gemType) internal {
         redeemedList[gemType] = 0;
     }
 
@@ -139,19 +139,19 @@ contract Gemstone {
     /*
         Check if customer has been whitelisted
     */
-    function isCustomerWhiteListed(address customerAddress, uint8 gemstoneType)
+    function isCustomerWhiteListed(address customerAddress, uint256 gemstoneType)
         internal
         view
         returns (bool)
     {
         require(
-            gemstoneType >= 0 && gemstoneType <= uint8(Types.GemstoneType.Ruby)
+            gemstoneType >= 0 && gemstoneType <= uint256(Types.GemstoneType.Ruby)
         );
         address[] storage whitelist = bundleWhitelist[
             Types.GemstoneType(gemstoneType)
         ];
         bool isWL = false;
-        for (uint8 i = 0; i < whitelist.length; i++) {
+        for (uint256 i = 0; i < whitelist.length; i++) {
             if (whitelist[i] == customerAddress) {
                 isWL = true;
             }
@@ -161,19 +161,19 @@ contract Gemstone {
 
     //Returns if the gemstone last minted is less than supply
     //@param gemstoneType gemstone type
-    function isGemstoneAvailable(uint8 gemType) public view returns (bool) {
+    function isGemstoneAvailable(uint256 gemType) public view returns (bool) {
         return gemstones[gemType].lastMintedId < gemstones[gemType].supply - 1;
     }
 
     //Returns if the gemstone was minted for the customer
     //@param customerAddress address of customer
     //@param gemId gemstone type
-    function isGemstoneMinted(address customerAddress, uint8 gemType)
+    function isGemstoneMinted(address customerAddress, uint256 gemType)
         public
         view
         returns (bool)
     {
-        require(gemType >= 0 && gemType <= uint8(Types.GemstoneType.Ruby));
+        require(gemType >= 0 && gemType <= uint256(Types.GemstoneType.Ruby));
         bool isMinted = false;
         for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
             Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
@@ -197,7 +197,7 @@ contract Gemstone {
         view
         returns (bool)
     {
-        uint8 validGemCount = 0;
+        uint256 validGemCount = 0;
         for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
             Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
             if (
@@ -211,7 +211,7 @@ contract Gemstone {
     }
 
     //Returns if the gemstone is redeemed for the ID. This is used to serve different URI
-    function isGemRedeemedForId(uint8 gemId) internal view returns (bool) {
+    function isGemRedeemedForId(uint256 gemId) internal view returns (bool) {
         console.log(redeemedList[gemId]);
         if (redeemedList[gemId] == 0) return false;
         else if (block.timestamp > redeemedList[gemId] + VALIDITY_PERIOD)
@@ -320,8 +320,8 @@ contract Gemstone {
         }
     }
 
-    function redeemGemstone(address customerAddress, uint8 gemId) internal {
-        for (uint8 i = 0; i < purchases[customerAddress].length; i++) {
+    function redeemGemstone(address customerAddress, uint256 gemId) internal {
+        for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
             if (purchases[customerAddress][i].gemId == gemId) {
                 purchases[customerAddress][i].redeemed = true;
                 break;

@@ -18,7 +18,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     }
 
     //function for adding address to whitelist for specific gemstone types
-    function addAddressToWhitelist(address customerAddress, uint8 gemstoneType)
+    function addAddressToWhitelist(address customerAddress, uint256 gemstoneType)
         public
         onlyOwner
     {
@@ -37,7 +37,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         ...
     */
     //function for whitelist minting
-    function whitelistMint(address customerAddress, uint8 gemstoneType)
+    function whitelistMint(address customerAddress, uint256 gemstoneType)
         public
         payable
     {
@@ -55,8 +55,8 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         );
 
         //mint of gemstone is recorded in mapping
-        uint8 gemId = recordPurchase(customerAddress, gemstoneType);
-        uint8 mintId = gemstoneType * 50 + gemId;
+        uint256 gemId = recordPurchase(customerAddress, gemstoneType);
+        uint256 mintId = gemstoneType * 50 + gemId;
 
         //Set redeemed as false by default
         addToRedeemedWithDefault(mintId);
@@ -114,7 +114,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         Range of gemstone type is defined in Types.sol (0..5)
     */
     function uri(uint256 id) public view override returns (string memory) {
-        if (!isGemRedeemedForId(uint8(id))) {
+        if (!isGemRedeemedForId(uint256(id))) {
             return
                 string(
                     abi.encodePacked(
@@ -137,7 +137,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
 
     //TODO Remove after testing
     //Not required here
-    function redeemGemstoneExperimental(address customerAddress, uint8 gemId)
+    function redeemGemstoneExperimental(address customerAddress, uint256 gemId)
         public
         onlyOwner
     {
