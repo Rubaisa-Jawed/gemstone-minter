@@ -49,8 +49,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
 
         //check if gemstone type has been minted by a specific customeraddress
         require(
-            !isGemstoneMinted(customerAddress, gemstoneType),
-            "Gemstone already minted"
+            !isGemstoneMinted(customerAddress, gemstoneType), "Gemstone already minted"
         );
 
         //mint of gemstone is recorded in mapping

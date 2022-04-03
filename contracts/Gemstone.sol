@@ -11,7 +11,7 @@ contract Gemstone {
     uint256 constant VALIDITY_PERIOD = 31556952; //1 year
 
     //Owner address
-    address owner;
+    address immutable owner;
 
     /*
         Lookup table for customer addresses and that purchased gemstones and minted
@@ -71,10 +71,9 @@ contract Gemstone {
         internal
         returns (uint256 gemId)
     {
-        require(gemType >= 0 && gemType <= uint256(Types.GemstoneType.Ruby));
         require(
-            gemstones[gemType].lastMintedId < gemstones[gemType].supply - 1
-        );
+            gemstones[gemType].lastMintedId < gemstones[gemType].supply - 1,
+        "No more gemstones available");
         uint256 lastMinted = gemstones[gemType].lastMintedId;
         Types.PurchaseInfo memory newPurchase = Types.PurchaseInfo(
             Types.GemstoneType(gemType),
@@ -96,7 +95,7 @@ contract Gemstone {
     */
     function addToWhitelist(address customerAddress, uint256 gemType) internal {
         require(
-            (gemType >= 0 && gemType <= uint256(Types.GemstoneType.Ruby)),
+            (gemType >= 0 && gemType <= 5),
             "Gemstone does not exist"
         );
         address[] storage whitelist = bundleWhitelist[
@@ -140,9 +139,7 @@ contract Gemstone {
         view
         returns (bool)
     {
-        require(
-            gemstoneType >= 0 && gemstoneType <= uint256(Types.GemstoneType.Ruby)
-        );
+        require(gemstoneType >= 0 && gemstoneType <= 5, "Invalid gemstone type");
         address[] storage whitelist = bundleWhitelist[
             Types.GemstoneType(gemstoneType)
         ];
@@ -169,7 +166,7 @@ contract Gemstone {
         view
         returns (bool)
     {
-        require(gemType >= 0 && gemType <= uint256(Types.GemstoneType.Ruby));
+        require(gemType >= 0 && gemType <= 5);
         bool isMinted = false;
         for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
             Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
@@ -196,10 +193,8 @@ contract Gemstone {
         uint256 validGemCount = 0;
         for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
             Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
-            if (
-                purchase.redeemed == false ||
-                (purchase.redeemed && block.timestamp > purchase.validityDate)
-            ) {
+            if (purchase.redeemed == false || block.timestamp > purchase.validityDate)
+            {
                 validGemCount += 1;
             }
         }
