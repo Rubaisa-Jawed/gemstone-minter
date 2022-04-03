@@ -102,16 +102,12 @@ contract Gemstone {
         address[] storage whitelist = bundleWhitelist[
             Types.GemstoneType(gemType)
         ];
-        if (whitelist.length == 0) {
-            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
-        } else {
-            for (uint256 i = 0; i < whitelist.length; i++) {
-                require(
-                    whitelist[i] != customerAddress,
-                    "Address already in whitelist"
-                );
-            }
-            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        for (uint256 i = 0; i <= whitelist.length; i++) {
+            require(
+                whitelist[i] != customerAddress,
+                "Address already in whitelist"
+            );
+            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress); 
         }
     }
 

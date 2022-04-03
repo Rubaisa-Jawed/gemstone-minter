@@ -42,8 +42,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         payable
     {
         //check if whitelist exists for this gemstone type
-        bool isWL = isCustomerWhiteListed(customerAddress, gemstoneType);
-        require(isWL, "Address does not have whitelist for this gemstone type");
+        require(isCustomerWhiteListed(customerAddress, gemstoneType), "Address does not have whitelist for this gemstone type");
 
         //check if gemstone is available for minting
         require(isGemstoneAvailable(gemstoneType), "Gemstone not available");
@@ -51,7 +50,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         //check if gemstone type has been minted by a specific customeraddress
         require(
             !isGemstoneMinted(customerAddress, gemstoneType),
-            "Gemstone not minted"
+            "Gemstone already minted"
         );
 
         //mint of gemstone is recorded in mapping
