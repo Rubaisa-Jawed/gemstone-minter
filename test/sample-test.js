@@ -70,11 +70,11 @@ describe("GemstoneMinter", function () {
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
   });
 
-  it("Should whitelist address for different gemstones", async function () {
+  it("Should whitelist different addresses for the same gemstones", async function () {
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 2);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr2.address, 2);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr3.address, 3);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr4.address, 4);
   });
 
   it("Should whitelist address for different gemstones", async function () {
@@ -83,6 +83,14 @@ describe("GemstoneMinter", function () {
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
+  });
+
+  it("Should whitelist different addresses for same gemstone", async function () {
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr2.address, 1);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr3.address, 1);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr4.address, 1);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr5.address, 1);
   });
 
   it("Should fail as whitelist address already exists", async function () {
@@ -103,9 +111,9 @@ describe("GemstoneMinter", function () {
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr2.address, 5);
     await gemstoneMinter.connect(addr2).whitelistMint(addr2.address, 5);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr3.address, 5);
-    await gemstoneMinter.connect(addr3).whitelistMint(addr3.address, 5);
-    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr4.address, 5);
+    // await gemstoneMinter.connect(owner).addAddressToWhitelist(addr3.address, 5);
+    // await gemstoneMinter.connect(addr3).whitelistMint(addr3.address, 5);
+    // await gemstoneMinter.connect(owner).addAddressToWhitelist(addr4.address, 5);
   });
 
   it("Should not allow a non Whitelist Address to mint a Gemstone", async function () {

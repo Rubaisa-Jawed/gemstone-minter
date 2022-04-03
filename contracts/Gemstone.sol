@@ -98,15 +98,15 @@ contract Gemstone {
             (gemType >= 0 && gemType <= 5),
             "Gemstone does not exist"
         );
-        address[] storage whitelist = bundleWhitelist[
-            Types.GemstoneType(gemType)
-        ];
-        for (uint256 i = 0; i <= whitelist.length; i++) {
-            require(
-                whitelist[i] != customerAddress,
-                "Address already in whitelist"
-            );
-            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress); 
+        address[] storage whitelist = bundleWhitelist[Types.GemstoneType(gemType)];
+        if(whitelist.length == 0) {
+            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
+        }
+        else {
+            for (uint256 i = 0; i < whitelist.length; i++) {
+                require(whitelist[i] != customerAddress, "Address already in whitelist"); 
+            }
+            bundleWhitelist[Types.GemstoneType(gemType)].push(customerAddress);
         }
     }
 
