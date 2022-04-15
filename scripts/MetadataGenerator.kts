@@ -18,7 +18,7 @@ fun getMetadataForId(id: Int, gemType: Int, isRedeemed: Boolean): String{
             " Collect all 6 tokens to be eligible to get the Goblet\"," +
             "\"external_url\":\"https://www.maltgraincane.com/\"," +
             "\"seller_fee_basis_points\":1000," +
-            "\"image\":\"ipfs://QmW6ToRNaodeEXio14yoaM83jVtD7VqHsZeNax7L5Anyed/${id}.svg\"," +
+            "\"image\":\"ipfs://QmUEBb6FbtizW9iHBMvnfNrX3xhELSa4SyBktEEy4J2cBD/${id}.png\"," +
             "\"name\":\"MultiGrain & Cane Whiskey ${getGemForId(gemType)} #${id}\"," +
             "\"attributes\":[{\"trait_type\": \"IsRedeemed\", \"value\": \"${isRedeemed}\"}]}"
     return json
