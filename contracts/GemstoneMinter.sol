@@ -18,10 +18,10 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     }
 
     //function for adding address to whitelist for specific gemstone types
-    function addAddressToWhitelist(address customerAddress, uint256 gemstoneType)
-        public
-        onlyOwner
-    {
+    function addAddressToWhitelist(
+        address customerAddress,
+        uint256 gemstoneType
+    ) public onlyOwner {
         addToWhitelist(customerAddress, gemstoneType);
     }
 
@@ -42,14 +42,18 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         payable
     {
         //check if whitelist exists for this gemstone type
-        require(isCustomerWhiteListed(customerAddress, gemstoneType), "Address does not have whitelist for this gemstone type");
+        require(
+            isCustomerWhiteListed(customerAddress, gemstoneType),
+            "Address does not have whitelist for this gemstone type"
+        );
 
         //check if gemstone is available for minting
         require(isGemstoneAvailable(gemstoneType), "Gemstone not available");
 
         //check if gemstone type has been minted by a specific customeraddress
         require(
-            !isGemstoneMinted(customerAddress, gemstoneType), "Gemstone already minted"
+            !isGemstoneMinted(customerAddress, gemstoneType),
+            "Gemstone already minted"
         );
 
         //mint of gemstone is recorded in mapping
@@ -116,7 +120,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmY2tkUPfNqHXH6SsVYg5fDJZKivKGqQC8TxVGpPKigJWp/",
+                        "ipfs://QmUSzqctDMWuyXQYT7xi73XLr2aeapRqX611Pms4oNPrW5/",
                         Strings.toString(id),
                         ".json"
                     )
@@ -125,7 +129,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmV5UyovXxbWaR3oibVsx9o3qCsbYdHaiQB9Sp6fbPKBNh/",
+                        "ipfs://QmQJfZiQSzqxE21qZNF31ahtYthDHTsYu84UwJB5j7wFup/",
                         Strings.toString(id),
                         ".json"
                     )
