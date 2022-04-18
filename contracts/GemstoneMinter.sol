@@ -9,7 +9,7 @@ import {Types} from "./libs/Types.sol";
 
 contract GemstoneMinter is Gemstone, ERC1155 {
     //This is for opensea contract name display
-    string public name = "MultiGrain & Cane Whiskey";
+    string public name = "Malt Grain & Cane Whiskey";
 
     constructor() ERC1155("") {
         console.log("Init GemstoneMinter success");
@@ -123,7 +123,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmPRTF5r8FV7bTQmCf7x7ofKKBApaYFwN53A5uDVpDXv3K/",
+                        "ipfs://QmU1Jktp6wF9S9THWRWmkQj2rBN9Af64RKAbxCzEDk4VPG/",
                         Strings.toString(id),
                         ".json"
                     )
@@ -132,7 +132,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://Qme3hQAv8sZHVtJ7GNMfLBv3siTRQcTT7FJxfAcCMJ4A7T/",
+                        "ipfs://QmdAQsriPcR9wY31UkEDyGrkyYqsMNbEaXArEKz2DF4mVB/",
                         Strings.toString(id),
                         ".json"
                     )
