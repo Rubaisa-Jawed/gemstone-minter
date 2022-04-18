@@ -13,7 +13,10 @@
   - users can use 6 unused gemstones to mint 1 goblet
   - for the next 3 or so (TBD) years, users can mint ‘REPLICA’ goblets every year (each year will have different art)
 
-WIP Minted: https://testnets.opensea.io/collection/unidentified-contract-ymri8szhfo
+Metadata sample:
+Redeemed : https://gateway.pinata.cloud/ipfs/QmZpBbFT8i71T75mmHoArxn5ufnwVVgDGXjesBsW9WwBro/1.json
+
+Not-Redeemed : https://gateway.pinata.cloud/ipfs/Qma2rC9ySm5sCfwXVdY5tbdAEgmAMyuvXvvoFm7ZTb7MmM/1.json
 
 Useful scripts:
 
