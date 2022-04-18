@@ -67,7 +67,7 @@ fun getMetadataForId(id: Int, gemType: Int, isRedeemed: Boolean): String{
             "{\"trait_type\": \"IsRedeemed\", \"value\": \"${isRedeemed}\"}," +
             "{\"display_type\": \"number\"," +
             "\"trait_type\": \"Limited Edition\"," +
-            "\"value\": ${id}}," +
+            "\"value\": ${id}, \"max_value\": 50}," +
             "{\"trait_type\": \"Year\"," +
             "\"value\": \"2022\"" +
             "}," +
