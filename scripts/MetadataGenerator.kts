@@ -61,7 +61,7 @@ fun getMetadataForId(id: Int, gemType: Int, isRedeemed: Boolean): String {
     var json = "{\"id\":\"${id}\",\"description\":\"${getDescriptionForId(gemType)}\"," +
             "\"external_url\":\"${getWebsiteLinkForId(gemType)}\"," +
             "\"seller_fee_basis_points\":1000," +
-            "\"image\":\"ipfs://QmUEBb6FbtizW9iHBMvnfNrX3xhELSa4SyBktEEy4J2cBD/${id}.png\"," +
+            "\"image\":\"ipfs://QmUEBb6FbtizW9iHBMvnfNrX3xhELSa4SyBktEEy4J2cBD/${gemType+1}.png\"," +
             "\"name\":\"${getGemForId(gemType)} #${id}\"," +
             "\"attributes\":[" +
             "{\"trait_type\": \"IsRedeemed\", \"value\": \"${isRedeemed}\"}," +
