@@ -45,13 +45,13 @@ fun getDescriptionForId(id: Int): String{
                 "“Bruce.. is that.. you..?”"
         4-> "An Amber stone that only exists on the Ethereum blockchain. " +
                 "A commemorative token for the purchase of Malt, Grain & Cane's Curated Range bottlings (Year 2). " +
-                "Upon closer inspection of this fossilised resin, you are suddenly transported to Japan, during the the early 1980s.\n" +
-                "You are driving in your Daihatsu, along the coast of Shizuoka Prefecture, on a cool summer evening. With the windows down, you look across the Suruga Bay.\n" +
+                "Upon closer inspection of this fossilised resin, you are suddenly transported to Japan, during the the early 1980s. " +
+                "You are driving in your Daihatsu, along the coast of Shizuoka Prefecture, on a cool summer evening. With the windows down, you look across the Suruga Bay. " +
                 "The Japanese Citypop hit-song, “Remember Me” by Step, is playing on the car radio. Your Soul is at peace, as you smile, while you continue your driving journey into the night."
         5-> "A Ruby gemstone that only exists on the Ethereum blockchain. " +
                 "A commemorative token for the purchase of Malt, Grain & Cane's Curated Range bottlings (Year 2). " +
                 "Upon closer inspection of this gemstone, you start to notice numerous cracks developing across the gemstone. It seems like something is emerging out of this gemstone. A sudden burst of brilliant energy roars through the cracks, as a maiden emerges. You blink & stumble, as you're bewildered by this abnormally. " +
-                "Your vision instantly snaps back into focus, as the Ruby gem is once made whole again, and you start to question to yourself; “Was that a Dream, or was that Reality...?”\n" +
+                "Your vision instantly snaps back into focus, as the Ruby gem is once made whole again, and you start to question to yourself; “Was that a Dream, or was that Reality...?” " +
                 "You pick yourself up, gather your belongings, and continue your journey forward."
         else -> ""
     }
