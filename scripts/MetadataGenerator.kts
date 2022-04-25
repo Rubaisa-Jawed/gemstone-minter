@@ -15,12 +15,12 @@ fun getGemForId(id: Int): String{
 
 fun getWebsiteLinkForId(id: Int): String{
     return when(id){
-        0-> "www.maltgraincane.com/bottles/008B"
-        1-> "www.maltgraincane.com/bottles/010B"
-        2-> "www.maltgraincane.com/bottles/011B"
-        3-> "www.maltgraincane.com/bottles/009B"
-        4-> "www.maltgraincane.com/bottles/012B"
-        5-> "www.maltgraincane.com/bottles/013B"
+        0-> "https://www.maltgraincane.com/bottles/008B"
+        1-> "https://www.maltgraincane.com/bottles/010B"
+        2-> "https://www.maltgraincane.com/bottles/011B"
+        3-> "https://www.maltgraincane.com/bottles/009B"
+        4-> "https://www.maltgraincane.com/bottles/012B"
+        5-> "https://www.maltgraincane.com/bottles/013B"
         else -> ""
     }
 }

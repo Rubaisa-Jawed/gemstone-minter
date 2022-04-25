@@ -14,9 +14,9 @@
   - for the next 3 or so (TBD) years, users can mint ‘REPLICA’ goblets every year (each year will have different art)
 
 Metadata sample:
-Redeemed : https://gateway.pinata.cloud/ipfs/QmdAQsriPcR9wY31UkEDyGrkyYqsMNbEaXArEKz2DF4mVB/1.json
+Redeemed : https://gateway.pinata.cloud/ipfs/QmaUzAyJ5hrovGtPdVg9ZQTjo1Q2ZYU7ztZ1SQG3C6Z26D/1.json
 
-Not-Redeemed : https://gateway.pinata.cloud/ipfs/QmU1Jktp6wF9S9THWRWmkQj2rBN9Af64RKAbxCzEDk4VPG/1.json
+Not-Redeemed : https://gateway.pinata.cloud/ipfs/QmYn21JY4tgB7EN35z11papkWG2YqyNdqiZJDN78zh8hYc/1.json
 
 Useful scripts:
 
