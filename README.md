@@ -25,6 +25,7 @@ npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
 npx hardhat test
+npx hardhat test ./test/goblet-test.js
 npx hardhat node
 node scripts/sample-script.js
 npx hardhat help

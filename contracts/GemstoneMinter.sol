@@ -132,7 +132,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://CID:QmaUzAyJ5hrovGtPdVg9ZQTjo1Q2ZYU7ztZ1SQG3C6Z26D/",
+                        "ipfs://QmaUzAyJ5hrovGtPdVg9ZQTjo1Q2ZYU7ztZ1SQG3C6Z26D/",
                         Strings.toString(id),
                         ".json"
                     )
