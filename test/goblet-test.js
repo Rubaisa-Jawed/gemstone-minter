@@ -35,7 +35,26 @@ describe('GobletMinter', function () {
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
-    await gobletMinter.mintGoblet(addr1.address, gemstoneMinter.address);
+    await gobletMinter.connect(addr1).mintGoblet(addr1.address, gemstoneMinter.address);
+  });
+  
+  it('Should fail to mint two goblets by the same address (without waiting for the validity period))', async function () {
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 0);
+    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 0);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
+    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 1);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 2);
+    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 2);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
+    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 3);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
+    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4);
+    await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
+    await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
+    await gobletMinter.connect(addr1).mintGoblet(addr1.address, gemstoneMinter.address);
+    await expect(
+      gobletMinter.connect(addr1).mintGoblet(addr1.address, gemstoneMinter.address)
+    ).to.be.revertedWith('Not eligible to mint goblet');
   });
 
   it('Should fail to mint a goblet for an address that does not have 6 gemstones', async function () {
@@ -46,7 +65,7 @@ describe('GobletMinter', function () {
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
     await expect(
-      gobletMinter.mintGoblet(addr1.address, gemstoneMinter.address)
+      gobletMinter.connect(addr1).mintGoblet(addr1.address, gemstoneMinter.address)
     ).to.be.revertedWith('Not eligible to mint goblet');
   });
 
