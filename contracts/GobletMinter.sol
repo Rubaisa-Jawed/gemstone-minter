@@ -31,35 +31,15 @@ contract GobletMinter is Goblet, ERC1155 {
     }
 
     function uri(uint256 id) public view override returns (string memory) {
-        //Depending on year, change URI
-        uint256 year = getGobletMintedYear(id);
-        if (year == 2022) {
-            return
-                string(
-                    abi.encodePacked(
-                        "ipfs://***CID HERE***/",
-                        Strings.toString(id),
-                        ".json"
-                    )
-                );
-        } else if (year == 2023) {
-            return
-                string(
-                    abi.encodePacked(
-                        "ipfs://***CID HERE***/",
-                        Strings.toString(id),
-                        ".json"
-                    )
-                );
-        } else {
-            return
-                string(
-                    abi.encodePacked(
-                        "ipfs://***CID HERE***/",
-                        Strings.toString(id),
-                        ".json"
-                    )
-                );
-        }
+        return
+        string(
+            abi.encodePacked(
+                "ipfs://QmTGwJCX7DC2GSLYtJG9rU3YdFTAZ5VUjQGYwnx4Bzh1Vs/",
+                Strings.toString(getGobletMintedYear(id)),
+                "_",
+                Strings.toString(id),
+                ".json"
+            )
+        );
     }
 }
