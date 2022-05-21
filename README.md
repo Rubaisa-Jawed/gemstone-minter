@@ -18,6 +18,8 @@ Redeemed : https://gateway.pinata.cloud/ipfs/QmaUzAyJ5hrovGtPdVg9ZQTjo1Q2ZYU7ztZ
 
 Not-Redeemed : https://gateway.pinata.cloud/ipfs/QmYn21JY4tgB7EN35z11papkWG2YqyNdqiZJDN78zh8hYc/1.json
 
+Goblet opensea : https://testnets.opensea.io/collection/malt-grain-cane-whiskey-pplgobox2b
+
 Useful scripts:
 
 ```shell
