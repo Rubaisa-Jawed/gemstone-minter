@@ -34,7 +34,7 @@ contract GobletMinter is Goblet, ERC1155 {
         return
         string(
             abi.encodePacked(
-                "ipfs://QmTGwJCX7DC2GSLYtJG9rU3YdFTAZ5VUjQGYwnx4Bzh1Vs/",
+                "ipfs://QmdReKfc8SFq4Z8YQREfhK7Lpws3v1xvCVXUVfewaDeVz5/",
                 Strings.toString(getGobletMintedYear(id)),
                 "_",
                 Strings.toString(id),
