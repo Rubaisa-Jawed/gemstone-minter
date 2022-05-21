@@ -6,7 +6,7 @@ fun getMetadataForId(id: Int, year: Int): String {
             "\"description\":\"Blah blah blah\"," +
             "\"external_url\":\"https://maltgrainwhiskey.com\"," +
             "\"seller_fee_basis_points\":1000," +
-            "\"image\":\"ipfs://QmcNKwH4yFpUrHwVcYn2rPw4uJzeyLypdXz5oSpo8JdHq8/${year}.png\"," +
+            "\"image\":\"ipfs://QmcNKwH4yFpUrHwVcYn2rPw4uJzeyLypdXz5oSpo8JdHq8/${year}.jpg\"," +
             "\"name\":\"Goblet #${id}\"," +
             "\"attributes\":[" +
             "{\"display_type\": \"number\"," +
