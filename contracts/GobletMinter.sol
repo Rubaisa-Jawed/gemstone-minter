@@ -19,27 +19,33 @@ contract GobletMinter is Goblet, ERC1155 {
     }
 
     //Function to mint goblet (gemstoneContract address to be hardcoded after testing)
-    function mintGoblet(address customerAddress, address gemstoneContract) public payable {
+    function mintGoblet(address customerAddress, address gemstoneContract)
+        public
+        payable
+    {
         GemstoneMinter gm = GemstoneMinter(gemstoneContract);
         require(
             gm.isEligibleToMintGoblet(customerAddress),
             "Not eligible to mint goblet"
         );
         uint256 gobletId = addGobletOwner(customerAddress);
+        console.log(gobletId);
         _mint(customerAddress, gobletId, 1, "");
         gm.redeemGemstonesForGoblet(customerAddress);
     }
 
     function uri(uint256 id) public view override returns (string memory) {
+        uint256 goblet = getGobletMintedYear(id);
+        console.log(goblet);
         return
-        string(
-            abi.encodePacked(
-                "ipfs://QmdReKfc8SFq4Z8YQREfhK7Lpws3v1xvCVXUVfewaDeVz5/",
-                Strings.toString(getGobletMintedYear(id)),
-                "_",
-                Strings.toString(id),
-                ".json"
-            )
-        );
+            string(
+                abi.encodePacked(
+                    "ipfs://QmdReKfc8SFq4Z8YQREfhK7Lpws3v1xvCVXUVfewaDeVz5/",
+                    Strings.toString(id),
+                    "_",
+                    Strings.toString(getGobletMintedYear(id)),
+                    ".json"
+                )
+            );
     }
 }
