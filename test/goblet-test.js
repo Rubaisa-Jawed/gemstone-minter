@@ -46,7 +46,7 @@ describe("GobletMinter", function () {
       .mintGoblet(addr1.address, gemstoneMinter.address);
   });
 
-  it("Should fail to mint two goblets by the same address (without waiting for the validity period))", async function () {
+  it("Should fail to mint two goblets by the same address (without waiting for next year))", async function () {
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 0);
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 0);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
