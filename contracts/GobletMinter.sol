@@ -23,14 +23,15 @@ contract GobletMinter is Goblet, ERC1155 {
         public
         payable
     {
+        require(
+            !isGobletMintedThisYear(customerAddress),
+            "Goblet minted this year already"
+        );
+        console.log("Mint exec in:", getYear(block.timestamp));
         GemstoneMinter gm = GemstoneMinter(gemstoneContract);
         require(
             gm.isEligibleToMintGoblet(customerAddress),
             "Not eligible to mint goblet"
-        );
-        require(
-            !isGobletMintedThisYear(customerAddress),
-            "Goblet minted this year already"
         );
         uint256 gobletId = addGobletOwner(customerAddress);
         _mint(customerAddress, gobletId, 1, "");

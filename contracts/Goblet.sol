@@ -10,7 +10,7 @@ contract Goblet {
         uint256 mintedDate; // Set with block.timestamp
     }
 
-    uint256 private constant VALIDITY_PERIOD = 31556952; //3 Years
+    uint256 private constant VALIDITY_PERIOD = 94670856; //3 Years
 
     uint256 private immutable INITIAL_DATE; //Date of contract deployment (2022)
 
@@ -59,7 +59,7 @@ contract Goblet {
             if (gobletOwners[i].owner == user) {
                 if (
                     getGobletMintedYear(gobletOwners[i].mintedDate) ==
-                    getGobletMintedYear(block.timestamp)
+                    getYear(block.timestamp)
                 ) {
                     return true;
                 }

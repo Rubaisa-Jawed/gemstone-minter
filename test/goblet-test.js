@@ -69,7 +69,7 @@ describe("GobletMinter", function () {
     ).to.be.revertedWith("Not eligible to mint goblet");
   });
 
-  it("Should mint goblets by the same address for next 3 years (after waiting for the validity period))", async function () {
+  it("Should mint goblets by the same address for next 3 year and fail after that (after waiting for the validity period))", async function () {
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 0);
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 0);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
@@ -82,20 +82,31 @@ describe("GobletMinter", function () {
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
+    //2022
     await gobletMinter
       .connect(addr1)
       .mintGoblet(addr1.address, gemstoneMinter.address);
     //Forward time by 1 year
     await forwardTime();
     //Mint next one
-    gobletMinter
+    //2023
+    await gobletMinter
       .connect(addr1)
       .mintGoblet(addr1.address, gemstoneMinter.address);
     //Forward time by 1 year
     await forwardTime();
-    gobletMinter
+    //2024
+    await gobletMinter
       .connect(addr1)
       .mintGoblet(addr1.address, gemstoneMinter.address);
+    //Forward time by 1 year
+    await forwardTime();
+    //2025
+    await expect(
+      gobletMinter
+        .connect(addr1)
+        .mintGoblet(addr1.address, gemstoneMinter.address)
+    ).to.be.revertedWith("Goblets cannot be minted anymore");
   });
 
   it("Should fail to mint goblets by the same address after 3 years (after waiting for the validity period))", async function () {
@@ -111,21 +122,9 @@ describe("GobletMinter", function () {
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4);
     await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
     await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
-    await gobletMinter
-      .connect(addr1)
-      .mintGoblet(addr1.address, gemstoneMinter.address);
-    //Forward time by 1 year
+    //Forward by 3 years
     await forwardTime();
-    //Mint next one
-    gobletMinter
-      .connect(addr1)
-      .mintGoblet(addr1.address, gemstoneMinter.address);
-    //Forward time by 1 year
     await forwardTime();
-    gobletMinter
-      .connect(addr1)
-      .mintGoblet(addr1.address, gemstoneMinter.address);
-    //Forward time by 1 year
     await forwardTime();
     await expect(
       gobletMinter
