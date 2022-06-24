@@ -14,6 +14,9 @@ contract GobletMinter is Goblet, ERC1155 {
     //This is for opensea contract name display
     string public name = "Malt Grain & Cane Whiskey";
 
+    error GobletMintedThisYear();
+    error InEligibleToMintGoblet();
+
     constructor() ERC1155("") {
         console.log("Init GobletMinter success");
     }
@@ -23,16 +26,13 @@ contract GobletMinter is Goblet, ERC1155 {
         public
         payable
     {
-        require(
-            !isGobletMintedThisYear(customerAddress),
-            "Goblet minted this year already"
-        );
-        console.log("Mint exec in:", getYear(block.timestamp));
+        if (isGobletMintedThisYear(customerAddress)) {
+            revert GobletMintedThisYear();
+        }
         GemstoneMinter gm = GemstoneMinter(gemstoneContract);
-        require(
-            gm.isEligibleToMintGoblet(customerAddress),
-            "Not eligible to mint goblet"
-        );
+        if (!gm.isEligibleToMintGoblet(customerAddress)) {
+            revert InEligibleToMintGoblet();
+        }
         uint256 gobletId = addGobletOwner(customerAddress);
         _mint(customerAddress, gobletId, 1, "");
         gm.redeemGemstonesForGoblet(customerAddress);

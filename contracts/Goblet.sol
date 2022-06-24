@@ -23,6 +23,9 @@ contract Goblet {
     //Publicly accessible list of goblet owners
     mapping(uint256 => GobletOwnership) public gobletOwners;
 
+    error GobletSupplyExhausted();
+    error MintPeriodOver();
+
     constructor() {
         INITIAL_DATE = block.timestamp;
         console.log("Init Goblet success");
@@ -32,12 +35,15 @@ contract Goblet {
         internal
         returns (uint256 gobletId)
     {
-        require(lastMintedId + 1 < MAX_SUPPLY, "No Goblet supply");
+        if (lastMintedId + 1 > MAX_SUPPLY) {
+            revert GobletSupplyExhausted();
+        }
         //Revert if current year is past the validity period, eg: user tries to mint in year 2026, but validity is till 2025
-        require(
-            getYear(INITIAL_DATE + VALIDITY_PERIOD) > getYear(block.timestamp),
-            "Goblets cannot be minted anymore"
-        );
+        if (
+            getYear(INITIAL_DATE + VALIDITY_PERIOD) <= getYear(block.timestamp)
+        ) {
+            revert MintPeriodOver();
+        }
 
         GobletOwnership memory gobletOwnership = GobletOwnership(
             customerAddress,
