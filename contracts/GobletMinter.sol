@@ -15,7 +15,7 @@ contract GobletMinter is Goblet, ERC1155 {
     string public name = "Malt Grain & Cane Whiskey";
 
     constructor() ERC1155("") {
-        console.log("Init GemstoneMinter success");
+        console.log("Init GobletMinter success");
     }
 
     //Function to mint goblet (gemstoneContract address to be hardcoded after testing)
@@ -27,6 +27,10 @@ contract GobletMinter is Goblet, ERC1155 {
         require(
             gm.isEligibleToMintGoblet(customerAddress),
             "Not eligible to mint goblet"
+        );
+        require(
+            !isGobletMintedThisYear(customerAddress),
+            "Goblet minted this year already"
         );
         uint256 gobletId = addGobletOwner(customerAddress);
         _mint(customerAddress, gobletId, 1, "");

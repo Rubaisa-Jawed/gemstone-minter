@@ -10,16 +10,17 @@ contract Goblet {
         uint256 mintedDate; // Set with block.timestamp
     }
 
-    uint256 constant VALIDITY_PERIOD = 31556952; //3 Years
+    uint256 private constant VALIDITY_PERIOD = 31556952; //3 Years
 
-    uint256 immutable INITIAL_DATE; //3 Years
+    uint256 private immutable INITIAL_DATE; //Date of contract deployment (2022)
 
-    uint256 constant SECONDS_PER_DAY = 86400; //24 * 60 * 60
+    uint256 private constant SECONDS_PER_DAY = 86400; //24 * 60 * 60
 
     uint256 constant MAX_SUPPLY = 100;
 
     uint256 internal lastMintedId = 0;
 
+    //Publicly accessible list of goblet owners
     mapping(uint256 => GobletOwnership) public gobletOwners;
 
     constructor() {
@@ -32,8 +33,9 @@ contract Goblet {
         returns (uint256 gobletId)
     {
         require(lastMintedId + 1 < MAX_SUPPLY, "No Goblet supply");
+        //Revert if current year is past the validity period, eg: user tries to mint in year 2026, but validity is till 2025
         require(
-            INITIAL_DATE + VALIDITY_PERIOD > block.timestamp,
+            getYear(INITIAL_DATE + VALIDITY_PERIOD) > getYear(block.timestamp),
             "Goblets cannot be minted anymore"
         );
 
@@ -48,7 +50,24 @@ contract Goblet {
         return lastMintedId;
     }
 
-    //TODO Function to get date of owned goblet
+    function isGobletMintedThisYear(address user)
+        internal
+        view
+        returns (bool isMintedThisYear)
+    {
+        for (uint64 i = 0; i < lastMintedId; i++) {
+            if (gobletOwners[i].owner == user) {
+                if (
+                    getGobletMintedYear(gobletOwners[i].mintedDate) ==
+                    getGobletMintedYear(block.timestamp)
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     function getGobletMintedYear(uint256 gobletId)
         internal
         view
