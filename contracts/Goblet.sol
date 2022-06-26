@@ -64,7 +64,7 @@ contract Goblet {
         for (uint64 i = 0; i < lastMintedId; i++) {
             if (gobletOwners[i].owner == user) {
                 if (
-                    getGobletMintedYear(gobletOwners[i].mintedDate) ==
+                    getYear(gobletOwners[i].mintedDate) ==
                     getYear(block.timestamp)
                 ) {
                     return true;
