@@ -11,7 +11,7 @@ contract GobletMinter is Goblet, ERC1155 {
     address gemstoneContract = 0x8fDB766E5d8D27A87534Eac7a8A34C7602b22210;
 
     //This is for opensea contract name display
-    string public name = "Malt Grain & Cane Whiskey Goblets";
+    string public name = "MGC Goblets";
 
     error GobletMintedThisYear();
     error InEligibleToMintGoblet();
