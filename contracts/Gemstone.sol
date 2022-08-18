@@ -232,8 +232,9 @@ contract Gemstone {
         1. The gemstone is not redeemed
         2. The gemstone is redeemed but past the validity period
         @param callerAdrress caller address (passed as parameter, not msg.sender, because function may be called by goblet.sol contract)
+        @returns 6 valid gemstones (one of each type) or 0 if not eligible to mint a goblet
     */
-    function isEligibleToMintGoblet(address callerAddress) public view returns (bool isEligibleToMintGoblet) {
+    function isEligibleToMintGoblet(address callerAddress) public view returns (uint256[6] memory callerOwnedValidGems) {
 
         // if its the owner, they can always mint, so return true immediately. 
         if (callerAddress == owner) {
@@ -257,13 +258,13 @@ contract Gemstone {
 
         // if they have 6, check they're at least one of each type 
 
-        // booleans to store whether each gemstone is valid or not 
-        bool gemOneValid = false;
-        bool gemTwoValid = false;
-        bool gemThreeValid = false;
-        bool gemFourValid = false;
-        bool gemFiveValid = false;
-        bool gemSixValid = false;
+        // ints to store whether each gemstone ID when a valid one is found (for each type)
+        uint gemOneValid = 0;
+        uint gemTwoValid = 0;
+        uint gemThreeValid = 0;
+        uint gemFourValid = 0;
+        uint gemFiveValid = 0;
+        uint gemSixValid = 0;
 
         // get validity status of each gemstone that the caller owns (from callerOwnedGems[])
         for (uint256 i = 0; i < callerOwnedGems.length; i++) {
@@ -275,30 +276,30 @@ contract Gemstone {
                 continue;
             } else if (gemId <= 50) {
                 // gem is gemstone 1 (1-50)
-                gemOneValid = true;
+                gemOneValid = gemId;
             } else if (gemId <= 100) {
                 // gem is gemstone 2 (51-100)
-                gemTwoValid = true;
+                gemTwoValid = gemId;
             } else if (gemId <= 150) {
                 // gem is gemstone 3 (101-150)
-                gemThreeValid = true;
+                gemThreeValid = gemId;
             } else if (gemId <= 200) {
                 // gem is gemstone 4 (151-200)
-                gemFourValid = true;
+                gemFourValid = gemId;
             } else if (gemId <= 250) {
                 // gem is gemstone 5 (201-250)
-                gemFiveValid = true;
+                gemFiveValid = gemId;
             } else if (gemId <= 300) {
                 // gem is gemstone 6 (251-300)
-                gemSixValid = true;
+                gemSixValid = gemId;
             }
             
         }
 
         if (gemOneValid && gemTwoValid && gemThreeValid && gemFourValid && gemFiveValid && gemSixValid) {
-            return true;
+            return [gemOneValid, gemTwoValid, gemThreeValid, gemFourValid, gemFiveValid, gemSixValid];
         } else {
-            return false; // not enough valid gemstones of all types 
+            return [0,0,0,0,0,0]; // not enough valid gemstones of all types. return all 0s
         }
     }
 
@@ -400,31 +401,33 @@ contract Gemstone {
         Redeems (up to) 6 gemstones at once (for the goblet contract)
         This function is accessible to the public (through GemstoneMinter.sol) and therefore eligibility to mint a goblet must be checked (otherwise non-eligible parties could redeem gemstones)
         Updates the purchase status as redeemed for each gemstone in the input array 
-        @param gemstoneIDs array of gemstone IDs 
         @param callerAddress address of the caller (passed as parameter not msg.sender, so that it can be called from goblet.sol)
         @returns bool true if all gemstones are successfully redeemed, false if not
     */
-    function redeemGemstonesByID(uint256[6] memory gemstoneIDs, address callerAddress)
+    function redeemGemstonesByID(address callerAddress)
         internal
         returns (bool)
     {
         // check if the caller is eligible to redeem his gemstones (to avoid illegal redemptions)
-        if (!isEligibleToMintGoblet(callerAddress)) {
+        uint256[6] memory callerOwnedValidGems = isEligibleToMintGoblet(callerAddress);
+        // if the first index is 0, then they are not eligible to redeem
+        if (!(callerOwnedValidGems[0] == 0)) {
             return false;
         }
-        // will redeem (up to) 6 gemstones at once (for the goblet contract) 
+
+        // the following will redeem (up to) 6 gemstones at once (for the goblet contract) 
         
-        // loop through each of the 6 gemstone IDs passed into the function 
-        for (uint256 i = 0; i < gemstoneIDs.length; i++) {
+        // loop through each of the 6 gemstone IDs owned by the caller (found via `isEligibleToMintGoblet` function)
+        for (uint256 i = 0; i < callerOwnedValidGems.length; i++) {
             // make sure the gemstone of ID `i` actually exists: 
-            if (!(purchasesByGemstone[gemstoneIDs[i]].length == 0)) {
+            if (!(purchasesByGemstone[callerOwnedValidGems[i]].length == 0)) {
                 // since it exists, retrieve the information & update the properties 
-                Types.PurchaseInfo memory purchase = purchasesByGemstone[gemstoneIDs[i]];
+                Types.PurchaseInfo memory purchase = purchasesByGemstone[callerOwnedValidGems[i]];
                 if (purchase.redeemed == false) {
                     purchase.redeemed = true; 
                     purchase.redeemedDate = block.timestamp;
-                    purchasesByGemstone[[gemstoneIDs][i]] = purchase;
-                    redeemedList[gemstoneIDs[i]] = block.timestamp;
+                    purchasesByGemstone[[callerOwnedValidGems][i]] = purchase;
+                    redeemedList[callerOwnedValidGems[i]] = block.timestamp;
                 }
             }
         }

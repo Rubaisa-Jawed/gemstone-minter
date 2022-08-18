@@ -74,13 +74,14 @@ contract GemstoneMinter is Gemstone, ERC1155 {
 
     /*
         Public function to be called to redeem gemstones when minting goblet.
-        It returns true after setting all the gemstones as redeemed.
+        It returns true after setting all the gemstones as redeemed. 
+        AUTOMATICALLY CHECKS WHETHER CALLER IS ELIGIBLE TO REDEEM OR NOT
         False if user fails condition to mint goblet. 
         This function must check if caller is eligible to mint the goblet. Otherwise it will create a security issue. 
         @param gemstoneIDs array of gemstones to redeem
         @returns bool true if all gemstones are successfully redeemed, false if not
     */
-    function redeemGemstonesForGoblet(uint256[6] memory gemstoneIDs)
+    function redeemGemstonesForGoblet(address customerAddress)
         public
         returns (bool)
     {

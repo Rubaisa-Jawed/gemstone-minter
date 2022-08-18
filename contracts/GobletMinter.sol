@@ -25,12 +25,13 @@ contract GobletMinter is Goblet, ERC1155 {
         if (isGobletMintedThisYear(customerAddress)) {
             revert GobletMintedThisYear();
         }
+        
         GemstoneMinter gm = GemstoneMinter(gemstoneContract);
-        if (!gm.isEligibleToMintGoblet(customerAddress)) {
+        if (!gm.redeemGemstonesForGoblet(customerAddress)) {
+            // `redeemGemstonesForGoblet` automatically checks whether the caller is eligible. If they are not, it will fail and return false. 
             revert InEligibleToMintGoblet();
         }
         uint256 gobletId = addGobletOwner(customerAddress);
-        gm.redeemGemstonesForGoblet(customerAddress);
         _mint(customerAddress, gobletId, 1, "");
     }
 
