@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
+import {GemstoneMinter} from "./GemstoneMinter.sol";
+import {Types} from "./libs/Types.sol";
 
 contract Goblet {
     struct GobletOwnership {
@@ -16,7 +18,7 @@ contract Goblet {
 
     uint256 constant SECONDS_PER_DAY = 86400; //24 * 60 * 60
 
-    uint256 constant MAX_SUPPLY = 100;
+    uint256 constant MAX_SUPPLY = 150;
 
     uint256 internal lastMintedId = 0;
 
@@ -45,7 +47,7 @@ contract Goblet {
         gobletOwners[lastMintedId + 1] = gobletOwnership;
         lastMintedId++;
 
-        return lastMintedId;
+        return lastMintedId; // returns the ID of the goblet minted 
     }
 
     //TODO Function to get date of owned goblet

@@ -53,18 +53,19 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         //check if gemstone is available for minting
         require(isGemstoneAvailable(gemstoneType), "Gemstone not available");
 
-        //check if gemstone type has been minted by a specific customeraddress
+        //check if gemstone type has been minted by a specific customeraddress (to avoid customers doubling minting the same type)
         require(
-            !isGemstoneMinted(customerAddress, gemstoneType),
+            !isGemstoneMinted(mintId),
             "Gemstone already minted"
         );
 
-        //mint of gemstone is recorded in mapping
-        uint256 gemId = recordPurchase(customerAddress, gemstoneType);
-        uint256 mintId = gemstoneType * 50 + gemId;
+        // Record minting of gemstone in mappings 
+        // (purchases, purchasesByGemstone, redeemedList)
+        uint256 gemId = recordPurchase(customerAddress, gemstoneType); // NOTE: gemId is only 1-50 for each gemstone type
+        uint256 mintId = gemstoneType * 50 + gemId; // NOTE: mintId is 1-300, for all gemstones. 
 
         //Set redeemed as false by default
-        addToRedeemedWithDefault(mintId);
+        // addToRedeemedWithDefault(mintId); (not needed)
 
         //Mint
         _mint(customerAddress, mintId, 1, "");
@@ -72,15 +73,18 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     }
 
     /*
-        Public function to be called by contract owner to mint a goblet
-        It returns true after setting all the gemstones as redeemed
-        False if user fails condition to mint goblet
+        Public function to be called to redeem gemstones when minting goblet.
+        It returns true after setting all the gemstones as redeemed.
+        False if user fails condition to mint goblet. 
+        This function must check if caller is eligible to mint the goblet. Otherwise it will create a security issue. 
+        @param gemstoneIDs array of gemstones to redeem
+        @returns bool true if all gemstones are successfully redeemed, false if not
     */
-    function redeemGemstonesForGoblet(address customerAddress)
+    function redeemGemstonesForGoblet(uint256[6] memory gemstoneIDs)
         public
         returns (bool)
     {
-        return redeemPurchasesForGoblet(customerAddress);
+        return redeemGemstonesByID(customerAddress);
     }
 
     //View fns
@@ -140,12 +144,15 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         }
     }
 
-    //TODO Remove after testing
-    //Not required here
-    function redeemGemstoneExperimental(address customerAddress, uint256 gemId)
-        public
-        onlyOwner
-    {
-        redeemGemstone(customerAddress, gemId);
-    }
+    // THIS CODE DOES NOT WORK. DELETE LATER. 
+    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    /*
+        function redeemGemstoneExperimental(address customerAddress, uint256 gemId)
+            public
+            onlyOwner
+        {
+            redeemGemstone(customerAddress, gemId);
+        }
+    */ 
+    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 }
