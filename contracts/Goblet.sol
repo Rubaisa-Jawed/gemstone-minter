@@ -12,17 +12,21 @@ contract Goblet {
         uint256 mintedDate; // Set with block.timestamp
     }
 
-    uint256 constant VALIDITY_PERIOD = 31556952; //3 Years
+    uint256 private constant VALIDITY_PERIOD = 94670856; //3 Years
 
-    uint256 immutable INITIAL_DATE; //3 Years
+    uint256 private immutable INITIAL_DATE; //Date of contract deployment (2022)
 
-    uint256 constant SECONDS_PER_DAY = 86400; //24 * 60 * 60
+    uint256 private constant SECONDS_PER_DAY = 86400; //24 * 60 * 60
 
     uint256 constant MAX_SUPPLY = 150;
 
     uint256 internal lastMintedId = 0;
 
+    //Publicly accessible list of goblet owners
     mapping(uint256 => GobletOwnership) public gobletOwners;
+
+    error GobletSupplyExhausted();
+    error MintPeriodOver();
 
     constructor() {
         INITIAL_DATE = block.timestamp;
@@ -33,11 +37,15 @@ contract Goblet {
         internal
         returns (uint256 gobletId)
     {
-        require(lastMintedId + 1 < MAX_SUPPLY, "No Goblet supply");
-        require(
-            INITIAL_DATE + VALIDITY_PERIOD > block.timestamp,
-            "Goblets cannot be minted anymore"
-        );
+        if (lastMintedId + 1 > MAX_SUPPLY) {
+            revert GobletSupplyExhausted();
+        }
+        //Revert if current year is past the validity period, eg: user tries to mint in year 2026, but validity is till 2025
+        if (
+            getYear(INITIAL_DATE + VALIDITY_PERIOD) <= getYear(block.timestamp)
+        ) {
+            revert MintPeriodOver();
+        }
 
         GobletOwnership memory gobletOwnership = GobletOwnership(
             customerAddress,
@@ -50,7 +58,24 @@ contract Goblet {
         return lastMintedId; // returns the ID of the goblet minted 
     }
 
-    //TODO Function to get date of owned goblet
+    function isGobletMintedThisYear(address user)
+        internal
+        view
+        returns (bool isMintedThisYear)
+    {
+        for (uint64 i = 0; i < lastMintedId; i++) {
+            if (gobletOwners[i].owner == user) {
+                if (
+                    getYear(gobletOwners[i].mintedDate) ==
+                    getYear(block.timestamp)
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     function getGobletMintedYear(uint256 gobletId)
         internal
         view

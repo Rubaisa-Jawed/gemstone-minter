@@ -8,26 +8,27 @@ import {GemstoneMinter} from "./GemstoneMinter.sol";
 import "./Goblet.sol";
 
 contract GobletMinter is Goblet, ERC1155 {
-    // commented out for testing purposes
-    // address gemstoneContract = 0x309dd80e29AB87b553592DC0c4938562adfAB3C9;
+    address gemstoneContract = 0x8fDB766E5d8D27A87534Eac7a8A34C7602b22210;
 
     //This is for opensea contract name display
-    string public name = "Malt Grain & Cane Whiskey";
+    string public name = "Malt, Grain & Cane Infinity Goblet";
+
+    error GobletMintedThisYear();
+    error InEligibleToMintGoblet();
 
     constructor() ERC1155("") {
-        console.log("Init GemstoneMinter success");
+        console.log("Init GobletMinter success");
     }
 
     //Function to mint goblet (gemstoneContract address to be hardcoded after testing)
-    function mintGoblet(address customerAddress, address gemstoneContract)
-        public
-        payable
-    {
+    function mintGoblet(address customerAddress) public payable {
+        if (isGobletMintedThisYear(customerAddress)) {
+            revert GobletMintedThisYear();
+        }
         GemstoneMinter gm = GemstoneMinter(gemstoneContract);
-        require(
-            gm.isEligibleToMintGoblet(customerAddress),
-            "Not eligible to mint goblet"
-        );
+        if (!gm.isEligibleToMintGoblet(customerAddress)) {
+            revert InEligibleToMintGoblet();
+        }
         uint256 gobletId = addGobletOwner(customerAddress);
         _mint(customerAddress, gobletId, 1, "");
         gm.redeemGemstonesForGoblet(customerAddress);

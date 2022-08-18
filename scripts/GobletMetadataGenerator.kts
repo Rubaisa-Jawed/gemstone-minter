@@ -3,10 +3,10 @@ import java.lang.System;
 
 fun getMetadataForId(id: Int, year: Int): String {
     var json = "{\"id\":\"${id}\"," +
-            "\"description\":\"Blah blah blah\"," +
+            "\"description\":\"Exclusive mintable Goblets collection for customers who have 6 GEMSTONES to redeem. You can mint replica goblets for each year, from 2022 to 2025\"," +
             "\"external_url\":\"https://maltgrainwhiskey.com\"," +
             "\"seller_fee_basis_points\":1000," +
-            "\"image\":\"ipfs://QmcNKwH4yFpUrHwVcYn2rPw4uJzeyLypdXz5oSpo8JdHq8/${year}.jpg\"," +
+            "\"image\":\"ipfs://QmcYPCU1Hy3VYLoSnkxxcxgW4B4CRwJaz3bxymkcXQNwWC/${year}.png\"," +
             "\"name\":\"Goblet #${id}\"," +
             "\"attributes\":[" +
             "{\"display_type\": \"number\"," +
@@ -36,7 +36,7 @@ fun writeToFile(dir: String, message: String, id: String) {
 fun generateMetadata() {
     val dir = System.getProperty("user.dir").replace("scripts","Metadata-goblet");
     System.out.println("Working Directory = " + dir);
-    for(year in 2022..2026){
+    for(year in 2022..2024){
         for (j in 1..50){
             var fileName = "${j}_${year}";
             writeToFile(dir, getMetadataForId(j,year), fileName.toString())
