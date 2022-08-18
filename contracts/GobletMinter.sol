@@ -30,8 +30,8 @@ contract GobletMinter is Goblet, ERC1155 {
             revert InEligibleToMintGoblet();
         }
         uint256 gobletId = addGobletOwner(customerAddress);
-        _mint(customerAddress, gobletId, 1, "");
         gm.redeemGemstonesForGoblet(customerAddress);
+        _mint(customerAddress, gobletId, 1, "");
     }
 
     function uri(uint256 id) public view override returns (string memory) {
