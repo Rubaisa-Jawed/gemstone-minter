@@ -43,11 +43,12 @@ contract Gemstone {
         Retrofitted onto the V1 of the contract, hence not totally replacing `purchases` mapping, or `redeemedList` mapping.
         Key is gemstone ID. Maps to purchase info.
     */
-    mapping (uint256 => Types.PurchaseInfo[]) purchasesByGemstone;
+    mapping (uint256 => Types.PurchaseInfo) purchasesByGemstone;
 
     /*
         The source of truth for redeemed gemstone id for easier querying
-        Key is gemstone id, value is true if the gemstone is redeemed
+        Key is gemstone id,
+        Value stores when the gemstone was last redeemed (or 0 if it has never been redeemed)
         Not redeemed state = 0
         Redeemed state = VALID TIMESTAMP
     */
@@ -94,7 +95,7 @@ contract Gemstone {
         uint256 gemstoneId = gemType * 50 + lastMinted + 1; // this ID is 1-300 for all gemstones
         // update all mappings tracking purchased gemstones 
         purchases[customerAddress].push(newPurchase);
-        purchasesByGemstone[gemstoneId].push(newPurchase);
+        purchasesByGemstone[gemstoneId] = newPurchase;
         gemstones[gemType].lastMintedId += 1;
         addToCustomerLookupTable(customerAddress);
 
@@ -328,23 +329,23 @@ contract Gemstone {
         @param callerOwnedValidGems array of gemstone IDs that the caller owns and are eligible to redeem (provided by `isEligibleToMintGoblet` function)
         @returns bool true if all gemstones are successfully redeemed, false if not
     */
-    function redeemGemstonesByID(address callerAddress, uint256[6] memory callerOwnedValidGems)
+    function redeemGemstonesByID(uint16[6] memory callerOwnedValidGems)
         internal
         returns (bool)
     {
         // the following will redeem (up to) 6 gemstones at once (for the goblet contract) 
         
         // loop through each of the 6 gemstone IDs owned by the caller (found via `isEligibleToMintGoblet` function)
-        for (uint256 i = 0; i < callerOwnedValidGems.length; i++) {
-            // make sure the gemstone of ID `i` actually exists: 
-            if (!(purchasesByGemstone[callerOwnedValidGems[i]].length == 0)) {
+        for (uint16 i = 0; i < callerOwnedValidGems.length; i++) {
+            // make sure the gemstone of ID `i` actually exists (by checking it has an ID in the struct greater than 0): 
+            uint256 currentID = uint256(callerOwnedValidGems[i]);
+            if (purchasesByGemstone[currentID].gemId > 0) {
                 // since it exists, retrieve the information & update the properties 
-                Types.PurchaseInfo memory purchase = purchasesByGemstone[callerOwnedValidGems[i]];
+                Types.PurchaseInfo memory purchase = purchasesByGemstone[currentID];
                 if (purchase.redeemed == false) {
                     purchase.redeemed = true; 
-                    purchase.redeemedDate = block.timestamp;
-                    purchasesByGemstone[[callerOwnedValidGems][i]] = purchase;
-                    redeemedList[callerOwnedValidGems[i]] = block.timestamp;
+                    purchasesByGemstone[currentID] = purchase;
+                    redeemedList[currentID] = block.timestamp; // save the redeemed date
                 }
             }
         }

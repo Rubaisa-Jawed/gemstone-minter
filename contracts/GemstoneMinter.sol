@@ -55,7 +55,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
 
         //check if gemstone type has been minted by a specific customeraddress (to avoid customers doubling minting the same type)
         require(
-            !isGemstoneMinted(mintId),
+            !isGemstoneMinted(customerAddress, gemstoneType),
             "Gemstone already minted"
         );
 
@@ -82,19 +82,13 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         @param callerAdrress caller address (passed as parameter, not msg.sender, because function may be called by goblet.sol contract)
         @returns 6 valid gemstones (one of each type) or 0 if not eligible to mint a goblet
     */
-    function isEligibleToMintGoblet(address callerAddress) public view returns (uint256[6] memory callerOwnedValidGems) {
-
-        // if its the owner, they can always mint, so return true immediately. 
-        if (callerAddress == owner) {
-            return true;
-        }
+    function isEligibleToMintGoblet(address callerAddress) public view returns (uint16[6] memory callerOwnedValidGems) {
 
         // firstly, find which gemstones the caller owns by running BalanceOf() through all NFT IDs (1-300) 
         // unfortunately while inefficient, this is the only option that makes sense in this scenario. 
-        mapping(uint256 => uint256) callerOwnedGems; 
+        uint16[6] memory callerOwnedGems; 
         uint NFTsCount = 0;
-        for (uint i = 1; i < 301; i++) {
-            if (purchasesByGemstone[i].)
+        for (uint16 i = 1; i < 301; i++) {
             if ((balanceOf(callerAddress, i)) > 0) {
                 // if token balance > 0, the caller has the NFT with ID `i` 
                 callerOwnedGems[NFTsCount] = i; // store the ID of the NFT 
@@ -108,16 +102,16 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         // if they have 6, check they're at least one of each type 
 
         // ints to store whether each gemstone ID when a valid one is found (for each type)
-        uint gemOneValid = 0;
-        uint gemTwoValid = 0;
-        uint gemThreeValid = 0;
-        uint gemFourValid = 0;
-        uint gemFiveValid = 0;
-        uint gemSixValid = 0;
+        uint16 gemOneValid = 0;
+        uint16 gemTwoValid = 0;
+        uint16 gemThreeValid = 0;
+        uint16 gemFourValid = 0;
+        uint16 gemFiveValid = 0;
+        uint16 gemSixValid = 0;
 
         // get validity status of each gemstone that the caller owns (from callerOwnedGems[])
         for (uint256 i = 0; i < callerOwnedGems.length; i++) {
-            gemId = callerOwnedGems[i];
+            uint16 gemId = callerOwnedGems[i];
 
             // make sure the current gemstone is valid (i.e. not redeemed)
             if (isGemRedeemedForId(gemId)) {
@@ -145,10 +139,11 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             
         }
 
-        if (gemOneValid && gemTwoValid && gemThreeValid && gemFourValid && gemFiveValid && gemSixValid) {
+        if ((gemOneValid > 0) && (gemTwoValid > 0) && (gemThreeValid > 0) && (gemFourValid > 0) && (gemFiveValid > 0) && (gemSixValid > 0)) {
             return [gemOneValid, gemTwoValid, gemThreeValid, gemFourValid, gemFiveValid, gemSixValid];
         } else {
-            return [0,0,0,0,0,0]; // not enough valid gemstones of all types. return all 0s
+            uint16[6] memory emptyArray;
+            return emptyArray; // not enough valid gemstones of all types. return all 0s
         }
     }
 
@@ -156,7 +151,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
     /*
         Public function to be called to redeem gemstones when minting goblet.
         It returns true after setting all the gemstones as redeemed. 
-        AUTOMATICALLY CHECKS WHETHER CALLER IS ELIGIBLE TO REDEEM OR NOT
+        AUTOMATICALLY CHECKS WHETHER CALLER IS ELIGIBLE TO REDEEM OR NOT. 
         False if user fails condition to mint goblet. 
         This function must check if caller is eligible to mint the goblet. Otherwise it will create a security issue. 
         @param gemstoneIDs array of gemstones to redeem
@@ -167,13 +162,13 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         returns (bool)
     {
         // check if the caller is eligible to redeem his gemstones (to avoid illegal redemptions)
-        uint256[6] memory callerOwnedValidGems = isEligibleToMintGoblet(callerAddress);
+        uint16[6] memory callerOwnedValidGems = isEligibleToMintGoblet(customerAddress);
         // if the first index is 0, then they are not eligible to redeem
         if (!(callerOwnedValidGems[0] == 0)) {
             return false;
         }
         // the customer has 6 valid gemstones, so now redeem them.
-        return redeemGemstonesByID(customerAddress, callerOwnedValidGems);
+        return redeemGemstonesByID(callerOwnedValidGems);
     }
 
     //View fns
