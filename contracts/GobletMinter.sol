@@ -21,18 +21,18 @@ contract GobletMinter is Goblet, ERC1155 {
     }
 
     //Function to mint goblet (gemstoneContract address to be hardcoded after testing)
-    function mintGoblet(address customerAddress) public payable {
-        if (isGobletMintedThisYear(customerAddress)) {
+    function mintGoblet() public payable {
+        if (isGobletMintedThisYear(msg.sender)) {
             revert GobletMintedThisYear();
         }
-        
+
         GemstoneMinter gm = GemstoneMinter(gemstoneContract);
-        if (!gm.redeemGemstonesForGoblet(customerAddress)) {
+        if (!gm.redeemGemstonesForGoblet(msg.sender)) {
             // `redeemGemstonesForGoblet` automatically checks whether the caller is eligible. If they are not, it will fail and return false. 
             revert InEligibleToMintGoblet();
         }
-        uint256 gobletId = addGobletOwner(customerAddress);
-        _mint(customerAddress, gobletId, 1, "");
+        uint256 gobletId = addGobletOwner(msg.sender);
+        _mint(msg.sender, gobletId, 1, "");
     }
 
     function uri(uint256 id) public view override returns (string memory) {
