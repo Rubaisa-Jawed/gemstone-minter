@@ -86,7 +86,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
 
         // firstly, find which gemstones the caller owns by running BalanceOf() through all NFT IDs (1-300) 
         // unfortunately while inefficient, this is the only option that makes sense in this scenario. 
-        uint16[6] memory callerOwnedGems; 
+        uint16[300] memory callerOwnedGems; 
         uint NFTsCount = 0;
         for (uint16 i = 1; i < 301; i++) {
             if ((balanceOf(callerAddress, i)) > 0) {
@@ -110,7 +110,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         uint16 gemSixValid = 0;
 
         // get validity status of each gemstone that the caller owns (from callerOwnedGems[])
-        for (uint256 i = 0; i < callerOwnedGems.length; i++) {
+        for (uint256 i = 0; i < NFTsCount; i++) {
             uint16 gemId = callerOwnedGems[i];
 
             // make sure the current gemstone is valid (i.e. not redeemed)
@@ -164,7 +164,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         // check if the caller is eligible to redeem his gemstones (to avoid illegal redemptions)
         uint16[6] memory callerOwnedValidGems = isEligibleToMintGoblet(customerAddress);
         // if the first index is 0, then they are not eligible to redeem
-        if (!(callerOwnedValidGems[0] == 0)) {
+        if (callerOwnedValidGems[0] == 0) {
             return false;
         }
         // the customer has 6 valid gemstones, so now redeem them.
