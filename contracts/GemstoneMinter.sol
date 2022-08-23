@@ -10,6 +10,8 @@ import {Types} from "./libs/Types.sol";
 contract GemstoneMinter is Gemstone, ERC1155 {
     //This is for opensea contract name display
     string public name = "Malt Grain & Cane Whiskey";
+    string public unredeemedMetadataCID = "QmYn21JY4tgB7EN35z11papkWG2YqyNdqiZJDN78zh8hYc";
+    string public redeemedMetadataCID = "QmaUzAyJ5hrovGtPdVg9ZQTjo1Q2ZYU7ztZ1SQG3C6Z26D";
 
     constructor() ERC1155("") {
         console.log("Init GemstoneMinter success");
@@ -197,6 +199,20 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         return getPurchases();
     }
 
+    /* 
+        Function to update the CID of the gemstones metadata. 
+        Can update redeemed or unredeemed gemstones metadata depeding on `updateRedeemed` parameter.
+        @param _cid is the new CID of the metadata.
+        @param updateRedeemed is a bool that determines whether to update the redeemed or unredeemed metadata.
+    */
+    function updateCID(string _cid, bool updateRedeemed) public onlyOwner { 
+        if (updateRedeemed) { 
+            redeemedMetadataCID = _cid;
+        } else {  
+            unredeemedMetadataCID = _cid;
+        }
+    }
+
     /*
         Returns uri for marketplaces
         We maintain 2 stores for metadata
@@ -211,7 +227,9 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmYn21JY4tgB7EN35z11papkWG2YqyNdqiZJDN78zh8hYc/",
+                        "ipfs://",
+                        unredeemedMetadataCID,
+                        "/",
                         Strings.toString(id),
                         ".json"
                     )
@@ -220,7 +238,9 @@ contract GemstoneMinter is Gemstone, ERC1155 {
             return
                 string(
                     abi.encodePacked(
-                        "ipfs://QmaUzAyJ5hrovGtPdVg9ZQTjo1Q2ZYU7ztZ1SQG3C6Z26D/",
+                        "ipfs://",
+                        redeemedMetadataCID,
+                        "/",
                         Strings.toString(id),
                         ".json"
                     )

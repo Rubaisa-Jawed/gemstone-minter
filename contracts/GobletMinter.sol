@@ -13,6 +13,8 @@ contract GobletMinter is Goblet, ERC1155 {
     //This is for opensea contract name display
     string public name = "Malt, Grain & Cane Infinity Goblet";
 
+    string public metadataCID = "QmSczXio2CCNkcTwbJPmHqbPv6oSv1C1ax61ebQuWhTLFj";
+
     error GobletMintedThisYear();
     error InEligibleToMintGoblet();
 
@@ -35,11 +37,21 @@ contract GobletMinter is Goblet, ERC1155 {
         _mint(msg.sender, gobletId, 1, "");
     }
 
+    /* 
+        Function to update the CID of the goblets metadata.
+        @param _cid is the new CID of the metadata.
+    */
+    function updateCID(string _cid) public onlyOwner {
+        metadataCID = _cid;
+    }
+
     function uri(uint256 id) public view override returns (string memory) {
         return
             string(
                 abi.encodePacked(
-                    "ipfs://QmSczXio2CCNkcTwbJPmHqbPv6oSv1C1ax61ebQuWhTLFj/",
+                    "ipfs://",
+                    metadataCID,
+                    "/",
                     Strings.toString(id),
                     "_",
                     Strings.toString(getGobletMintedYear(id)),
