@@ -205,7 +205,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         @param _cid is the new CID of the metadata.
         @param updateRedeemed is a bool that determines whether to update the redeemed or unredeemed metadata.
     */
-    function updateCID(string _cid, bool updateRedeemed) public onlyOwner { 
+    function updateCID(string calldata _cid, bool updateRedeemed) public onlyOwner { 
         if (updateRedeemed) { 
             redeemedMetadataCID = _cid;
         } else {  

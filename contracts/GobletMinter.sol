@@ -15,10 +15,18 @@ contract GobletMinter is Goblet, ERC1155 {
 
     string public metadataCID = "QmSczXio2CCNkcTwbJPmHqbPv6oSv1C1ax61ebQuWhTLFj";
 
+    address immutable owner; 
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can call this function");
+        _;
+    }
+
     error GobletMintedThisYear();
     error InEligibleToMintGoblet();
 
     constructor() ERC1155("") {
+        owner = msg.sender;
         console.log("Init GobletMinter success");
     }
 
@@ -41,7 +49,7 @@ contract GobletMinter is Goblet, ERC1155 {
         Function to update the CID of the goblets metadata.
         @param _cid is the new CID of the metadata.
     */
-    function updateCID(string _cid) public onlyOwner {
+    function updateCID(string calldata _cid) public onlyOwner {
         metadataCID = _cid;
     }
 
