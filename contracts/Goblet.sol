@@ -23,6 +23,7 @@ contract Goblet {
     uint256 internal lastMintedId = 0;
 
     //Publicly accessible list of goblet owners
+    // maps from goblet ID to GobletOwnership struct 
     mapping(uint256 => GobletOwnership) public gobletOwners;
 
     error GobletSupplyExhausted();
