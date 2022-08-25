@@ -12,6 +12,9 @@ describe("GobletMinter", function () {
   let owner, addr1, addr2;
 
   beforeEach(async function () {
+    let currentDate = new Date();
+    currentDate = currentDate.getTime() / 1000;
+
     [owner, addr1, addr2, addr3, addr4, addr5, addr6] =
       await ethers.getSigners();
     GobletMinter = await ethers.getContractFactory("GobletMinter");
@@ -22,10 +25,18 @@ describe("GobletMinter", function () {
     await goblet.deploy();
     await gobletMinter.deployed();
     await gemstoneMinter.deployed();
+
+    // set it to current date (to get 2022 goblet)
+    // await ethers.provider.send("evm_increaseTime", [currentDate]);
+    // console.log(currentDate);
+    // await ethers.provider.send("evm_mine");
   });
 
   it("Should console the uri", async function () {
+    await gobletMinter.connect(owner).ownerGobletMint();
+    console.log(await gobletMinter.connect(owner).uri(0));
     console.log(await gobletMinter.connect(owner).uri(1));
+    console.log(block.timestamp);
   });
 
   it("Should successfully mint a goblet", async function () {

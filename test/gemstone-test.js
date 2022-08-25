@@ -10,8 +10,8 @@ describe("GemstoneMinter", function () {
       await ethers.getSigners();
     GemstoneMinter = await ethers.getContractFactory("GemstoneMinter");
     gemstoneMinter = await GemstoneMinter.deploy();
-    gemstone = await ethers.getContractFactory("Gemstone");
-    await gemstone.deploy();
+    // gemstone = await ethers.getContractFactory("Gemstone");
+    // await gemstone.deploy();
     await gemstoneMinter.deployed();
   });
 
