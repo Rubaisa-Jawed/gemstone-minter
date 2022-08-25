@@ -223,9 +223,30 @@ describe("Integrated tests", function () {
         await expect(gobletMinter.connect(addr1).ownerGobletMint()).to.be.reverted;
     });
 
-    // COMBINED FULL FUNCTIONALITY TESTS ------------------------------------------------------------------------------------------------------------------------
+    // COMBINED END-TO-END TESTS ------------------------------------------------------------------------------------------------------------------------
 
     // mint all 6 gemstones, as a non-owner, and mint the goblet, every year, for 3 years
+    it("Should allow a user to mint 6 gemstones, and mint a goblet", async function () {
+        // whitelist for 6 gemstones 
+        await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 0);
+        await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 1);
+        await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 2);
+        await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 3);
+        await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 4);
+        await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
+        // mint all 6 gemstones 
+        await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 0);
+        await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 1);
+        await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 2);
+        await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 3);
+        await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 4);
+        await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 5);
+        // mint a goblet 
+        await gobletMinter.connect(addr1).mintGoblet();
 
+        let balance; 
+        balance = await gobletMinter.connect(addr2).balanceOf(addr1.address, 1);
+        await expect(balance.toNumber()).to.equal(1);
+    })
     // mi
 });
