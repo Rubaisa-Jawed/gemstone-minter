@@ -14,12 +14,20 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
+  console.log("Deploying GemstoneMinter");
   const GemstoneMinter = await hre.ethers.getContractFactory("GemstoneMinter");
   const gemstoneMinter = await GemstoneMinter.deploy();
 
   await gemstoneMinter.deployed();
 
   console.log("GemstoneMinter deployed to:", gemstoneMinter.address);
+
+  console.log("Deploying GobletMinter");
+  const GobletMinter = await hre.ethers.getContractFactory("GobletMinter");
+  const gobletMinter = await GobletMinter.deploy();
+
+  await gobletMinter.deployed();
+
 
   // await gemstoneMinter.addAddressToWhitelist(
   //   "0xc2fBFf61209Bc2E13783Aac1268D6b76Ffa0D733",
