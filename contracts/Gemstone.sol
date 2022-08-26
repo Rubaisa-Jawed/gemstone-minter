@@ -85,14 +85,16 @@ contract Gemstone {
         "No more gemstones available");
 
         uint256 lastMinted = gemstones[gemType].lastMintedId;
+
+        uint256 gemstoneId = gemType * 50 + lastMinted + 1; // this ID is 1-300 for all gemstones
+
         Types.PurchaseInfo memory newPurchase = Types.PurchaseInfo(
             Types.GemstoneType(gemType),
-            lastMinted + 1,
+            gemstoneId,
             block.timestamp,
             block.timestamp + VALIDITY_PERIOD,
             false
         );
-        uint256 gemstoneId = gemType * 50 + lastMinted + 1; // this ID is 1-300 for all gemstones
         // update all mappings tracking purchased gemstones 
         purchases[customerAddress].push(newPurchase);
         purchasesByGemstone[gemstoneId] = newPurchase;
@@ -339,6 +341,8 @@ contract Gemstone {
         for (uint16 i = 0; i < callerOwnedValidGems.length; i++) {
             // make sure the gemstone of ID `i` actually exists (by checking it has an ID in the struct greater than 0): 
             uint256 currentID = uint256(callerOwnedValidGems[i]);
+            console.log("****************** PURCHASE INFO BY GEMSTONE ID (@redeemGemstonesByID) ******************");
+            console.log(purchasesByGemstone[currentID].gemId);
             if (purchasesByGemstone[currentID].gemId > 0) {
                 // since it exists, retrieve the information & update the properties 
                 Types.PurchaseInfo memory purchase = purchasesByGemstone[currentID];
@@ -346,6 +350,7 @@ contract Gemstone {
                     purchase.redeemed = true; 
                     purchasesByGemstone[currentID] = purchase;
                     redeemedList[currentID] = block.timestamp; // save the redeemed date
+                    console.log("GEM REDEEMED @ CURRENT ID: ", currentID);
                 }
             }
         }
