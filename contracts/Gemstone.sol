@@ -202,33 +202,6 @@ contract Gemstone {
         return isMinted;
     }
 
-    
-    // THIS FUNCTION IS BROKEN, AND OUT OF USE. NEW ELIGIBILITY CHECKING FUNCTION IS IN `GemstoneMinter.sol` (because it uses `balanceOf`).
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    /*
-        Returns if the user has 6 gemstones redeemable
-        Redeemable is true in 2 conditions
-        1. The gemstone is not redeemed
-        2. The gemstone is redeemed but past the validity period
-        @param customerAddress customer address
-    function isEligibleToMintGoblet(address customerAddress)
-        public
-        view
-        returns (bool)
-    {
-        for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
-            Types.PurchaseInfo memory purchase = purchases[customerAddress][i];
-            if (purchase.redeemed == false || block.timestamp > purchase.validityDate)
-            {
-                validGemCount += 1;
-            }
-        }
-        return validGemCount == 6;
-    }
-    */
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    
-
     /* 
         Returns if the gemstone is redeemed for the ID. 
         This is used to serve different URIs (for redeemed gemstones)
@@ -237,12 +210,43 @@ contract Gemstone {
         @returns bool isRedeemed
     */
     function isGemRedeemedForId(uint256 gemId) internal view returns (bool) {
-        // NOTE: Is this function working ? It seems that the gemstones will only be redeemable a year after they've been redeemed the first time. 
-        // (instead of being redeemable depending what year it is)
+
+        // if it's 0, it has never been used, so it's immediately valid (unredeemed). 
         if (redeemedList[gemId] == 0) return false;
-        else if (block.timestamp > redeemedList[gemId] + VALIDITY_PERIOD)
-            return false;
-        else return true;
+
+        // ORIGINAL GOBLET CAN BE MINTED FROM: 01SEP2022 (00:00) - 30SEP2023 (23:59:59)
+        // SECOND GOBLET CAN BE MINTED FROM: 01OCT2023 (00:00) - 30SEPT2024 (23:59:59)
+        // THIRD GOBLET CAN BE MINTED FROM: 01OCT2024 (00:00) - 30SEPT2025 (23:59:59)
+        uint SEP_01_2022 = 1661990400; // (00:00:00)
+        uint SEP_30_2023 = 1696118399; // (23:59:59)
+        // uint OCT_01_2023 = 1696118400; // (00:00:00)
+        uint SEP_30_2024 = 1727740799; // (23:59:59)
+        // uint OCT_01_2024 = 1727740800; // (00:00:00)
+        uint SEP_30_2025 = 1759276799; // (23:59:59)
+
+        if (block.timestamp >= SEP_01_2022 && block.timestamp <= SEP_30_2023) {
+            
+            // within the original minting period
+            if (redeemedList[gemId] <= SEP_30_2023) {
+                // latest mint date is before end of mint period. Therefore gem is redeemed already  
+                return true;
+            }
+        } else if (block.timestamp <= SEP_30_2024) {
+            
+            // time is before the second minting period is over, but after the first. Within the second minting period. 
+            if (redeemedList[gemId] >= SEP_30_2023) {
+                // latest mint has been within the mint period (after mint period started, and block.timestamp confirms it has not ended). Therefore gem is redeemed already (invalid)
+                return true;
+            }
+        } else if (block.timestamp <= SEP_30_2025) {
+            // same deal as before. 
+            if (redeemedList[gemId] >= SEP_30_2024) {
+                // latest mint was after this mint period started. Therefore it's been redeemed for this mint period.
+                return true;
+            }
+        } 
+
+        return false;
     }
 
     //Returns purchases of customer
@@ -341,53 +345,22 @@ contract Gemstone {
         for (uint16 i = 0; i < callerOwnedValidGems.length; i++) {
             // make sure the gemstone of ID `i` actually exists (by checking it has an ID in the struct greater than 0): 
             uint256 currentID = uint256(callerOwnedValidGems[i]);
-            console.log("****************** PURCHASE INFO BY GEMSTONE ID (@redeemGemstonesByID) ******************");
-            console.log(purchasesByGemstone[currentID].gemId);
+            
             if (purchasesByGemstone[currentID].gemId > 0) {
                 // since it exists, retrieve the information & update the properties 
                 Types.PurchaseInfo memory purchase = purchasesByGemstone[currentID];
                 if (purchase.redeemed == false) {
                     purchase.redeemed = true; 
-                    purchasesByGemstone[currentID] = purchase;
-                    redeemedList[currentID] = block.timestamp; // save the redeemed date
-                    console.log("GEM REDEEMED @ CURRENT ID: ", currentID);
                 }
+                purchasesByGemstone[currentID] = purchase;
+                redeemedList[currentID] = block.timestamp; // save the redeemed date
+                
+                
             }
         }
         return true;
 
-        // OLD CODE. NOT USED.
-        // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-        /* 
-            if (isEligibleToMintGoblet(customerAddress)) {
-                for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
-                    if (purchases[customerAddress][i].redeemed == false) {
-                        purchases[customerAddress][i].redeemed = true;
-                        redeemedList[
-                            purchases[customerAddress][i].gemId + 100
-                        ] = block.timestamp;
-                    }
-                }
-                return true;
-            } else {
-                return false;
-            }
-        */
-        // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+        
     }
 
-    // OLD CODE. NOT USED. DEPRECATED FUNCTINO USED TO REDEEM GEMSTONES 
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    /*
-        function redeemGemstone(address customerAddress, uint256 gemId) internal {
-            for (uint256 i = 0; i < purchases[customerAddress].length; i++) {
-                if (purchases[customerAddress][i].gemId == gemId) {
-                    purchases[customerAddress][i].redeemed = true;
-                    break;
-                }
-            }
-            redeemedList[gemId] = block.timestamp;
-        }
-    */
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 }

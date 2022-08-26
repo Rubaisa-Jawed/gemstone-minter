@@ -12,7 +12,7 @@ contract Goblet {
         uint256 mintedDate; // Set with block.timestamp
     }
 
-    uint256 private constant VALIDITY_PERIOD = 94670856; //3 Years
+    uint256 private constant VALIDITY_PERIOD = 1759276799; // LAST MINT IS SEP_30_2025 (23:59:59)
 
     uint256 private immutable INITIAL_DATE; //Date of contract deployment (2022)
 
@@ -41,9 +41,9 @@ contract Goblet {
         if (lastMintedId + 1 > MAX_SUPPLY) {
             revert GobletSupplyExhausted();
         }
-        //Revert if current year is past the validity period, eg: user tries to mint in year 2026, but validity is till 2025
+        // Revert if current time is after the final mint date. 
         if (
-            getYear(INITIAL_DATE + VALIDITY_PERIOD) <= getYear(block.timestamp)
+            block.timestamp > VALIDITY_PERIOD
         ) {
             revert MintPeriodOver();
         }
@@ -77,12 +77,29 @@ contract Goblet {
         return false;
     }
 
-    function getGobletMintedYear(uint256 gobletId)
+    function getGobletMintedPeriod(uint256 gobletId)
         internal
         view
         returns (uint256)
     {
-        GobletOwnership memory gobletOwnership = gobletOwners[gobletId];
+        GobletOwnership memory gobletOwnership = gobletOwners[gobletId]; 
+
+        // ORIGINAL GOBLET CAN BE MINTED FROM: 01SEP2022 (00:00) - 30SEP2023 (23:59:59)
+        // SECOND GOBLET CAN BE MINTED FROM: 01OCT2023 (00:00) - 30SEPT2024 (23:59:59)
+        // THIRD GOBLET CAN BE MINTED FROM: 01OCT2024 (00:00) - 30SEPT2025 (23:59:59)
+        uint SEP_01_2022 = 1661990400; // (00:00:00)
+        uint SEP_30_2023 = 1696118399; // (23:59:59)
+        uint SEP_30_2024 = 1727740799; // (23:59:59)
+        uint SEP_30_2025 = 1759276799; // (23:59:59)
+        console.log(block.timestamp);
+        if (gobletOwnership.mintedDate >= SEP_01_2022 && gobletOwnership.mintedDate <= SEP_30_2023) {
+            return 2022;
+        } else if (gobletOwnership.mintedDate <= SEP_30_2024) {
+            return 2023;
+        } else if (gobletOwnership.mintedDate <= SEP_30_2025) {
+            return 2024;
+        }
+
         return getYear(gobletOwnership.mintedDate);
     }
 

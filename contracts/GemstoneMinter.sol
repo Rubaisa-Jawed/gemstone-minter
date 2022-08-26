@@ -71,7 +71,6 @@ contract GemstoneMinter is Gemstone, ERC1155 {
 
         //Mint
         _mint(customerAddress, mintId, 1, "");
-        console.log("Whitelisted minted: ", Strings.toString(mintId));
     }
 
     /* 
@@ -149,6 +148,10 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         }
     }
 
+    function isGemRedeemedForId_REPLICA_TO_DELETE(uint256 gemId) public view returns (bool) {
+        return isGemRedeemedForId(gemId);
+    }
+
 
     /*
         Public function to be called to redeem gemstones when minting goblet.
@@ -169,7 +172,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         if (callerOwnedValidGems[0] == 0) {
             return false;
         }
-        // the customer has 6 valid gemstones, so now redeem them.
+        // the customer has 6 valid gemstones, so now redeem them. 
         return redeemGemstonesByID(callerOwnedValidGems);
     }
 
@@ -247,16 +250,4 @@ contract GemstoneMinter is Gemstone, ERC1155 {
                 ); //Redeemed ipfs
         }
     }
-
-    // THIS CODE DOES NOT WORK. DELETE LATER. 
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-    /*
-        function redeemGemstoneExperimental(address customerAddress, uint256 gemId)
-            public
-            onlyOwner
-        {
-            redeemGemstone(customerAddress, gemId);
-        }
-    */ 
-    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 }

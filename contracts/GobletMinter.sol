@@ -33,12 +33,6 @@ contract GobletMinter is Goblet, ERC1155 {
     //Function to mint goblet (gemstoneContract address to be hardcoded after testing)
     function mintGoblet() public payable {
 
-        // THIS IS COMMMENTED OUT BECAUSE IT SHOULD NOT BE NEEDED. 
-        // customers can mint as many goblets in a year, as long as they have the right gemstones.
-        // if (isGobletMintedThisYear(msg.sender)) {
-        //     revert GobletMintedThisYear();
-        // }
-
 
         GemstoneMinter gm = GemstoneMinter(gemstoneContract);
         if (!gm.redeemGemstonesForGoblet(msg.sender)) {
@@ -72,7 +66,7 @@ contract GobletMinter is Goblet, ERC1155 {
                     "/",
                     Strings.toString(id),
                     "_",
-                    Strings.toString(getGobletMintedYear(id)),
+                    Strings.toString(getGobletMintedPeriod(id)),
                     ".json"
                 )
             );
