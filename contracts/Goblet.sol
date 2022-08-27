@@ -12,13 +12,13 @@ contract Goblet {
         uint256 mintedDate; // Set with block.timestamp
     }
 
-    uint256 private constant VALIDITY_PERIOD = 1759276799; // LAST MINT IS SEP_30_2025 (23:59:59)
+    uint256 private constant VALIDITY_PERIOD = 1790812799; // LAST MINT IS SEP_30_2026 (23:59:59)
 
     uint256 private immutable INITIAL_DATE; //Date of contract deployment (2022)
 
     uint256 private constant SECONDS_PER_DAY = 86400; //24 * 60 * 60
 
-    uint256 constant MAX_SUPPLY = 150;
+    uint256 constant MAX_SUPPLY = 200;
 
     uint256 internal lastMintedId = 0;
 
@@ -87,10 +87,12 @@ contract Goblet {
         // ORIGINAL GOBLET CAN BE MINTED FROM: 01SEP2022 (00:00) - 30SEP2023 (23:59:59)
         // SECOND GOBLET CAN BE MINTED FROM: 01OCT2023 (00:00) - 30SEPT2024 (23:59:59)
         // THIRD GOBLET CAN BE MINTED FROM: 01OCT2024 (00:00) - 30SEPT2025 (23:59:59)
+        // FOURTH GOBLET CAN BE MINTED FROM: 01OCT2025 (00:00) - 30SEPT2026 (23:59:59)
         uint SEP_01_2022 = 1661990400; // (00:00:00)
         uint SEP_30_2023 = 1696118399; // (23:59:59)
         uint SEP_30_2024 = 1727740799; // (23:59:59)
         uint SEP_30_2025 = 1759276799; // (23:59:59)
+        uint SEP_30_2026 = 1790812799; // (23:59:59)
         console.log(block.timestamp);
         if (gobletOwnership.mintedDate >= SEP_01_2022 && gobletOwnership.mintedDate <= SEP_30_2023) {
             return 2022;
@@ -98,6 +100,8 @@ contract Goblet {
             return 2023;
         } else if (gobletOwnership.mintedDate <= SEP_30_2025) {
             return 2024;
+        } else if (gobletOwnership.mintedDate <= SEP_30_2026) {
+            return 2025;
         }
 
         return getYear(gobletOwnership.mintedDate);

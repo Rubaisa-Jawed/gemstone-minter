@@ -217,12 +217,14 @@ contract Gemstone {
         // ORIGINAL GOBLET CAN BE MINTED FROM: 01SEP2022 (00:00) - 30SEP2023 (23:59:59)
         // SECOND GOBLET CAN BE MINTED FROM: 01OCT2023 (00:00) - 30SEPT2024 (23:59:59)
         // THIRD GOBLET CAN BE MINTED FROM: 01OCT2024 (00:00) - 30SEPT2025 (23:59:59)
+        // FOURTH GOBLET CAN BE MINTED FROM: 01OCT2025 (00:00) - 30SEPT2026 (23:59:59)
         uint SEP_01_2022 = 1661990400; // (00:00:00)
         uint SEP_30_2023 = 1696118399; // (23:59:59)
         // uint OCT_01_2023 = 1696118400; // (00:00:00)
         uint SEP_30_2024 = 1727740799; // (23:59:59)
         // uint OCT_01_2024 = 1727740800; // (00:00:00)
         uint SEP_30_2025 = 1759276799; // (23:59:59)
+        uint SEP_30_2026 = 1790812799; // (23:59:59)
 
         if (block.timestamp >= SEP_01_2022 && block.timestamp <= SEP_30_2023) {
             
@@ -244,7 +246,13 @@ contract Gemstone {
                 // latest mint was after this mint period started. Therefore it's been redeemed for this mint period.
                 return true;
             }
-        } 
+        } else if (block.timestamp <= SEP_30_2026) {
+            // same deal as before 
+            if (redeemedList[gemId] >= SEP_30_2025) {
+                // latest mint was after this period started, therefore it's been redeemed 
+                return true; 
+            }
+        }
 
         return false;
     }

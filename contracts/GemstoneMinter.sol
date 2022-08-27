@@ -9,7 +9,7 @@ import {Types} from "./libs/Types.sol";
 
 contract GemstoneMinter is Gemstone, ERC1155 {
     //This is for opensea contract name display
-    string public name = "Malt Grain & Cane Whiskey";
+    string public name = "Malt, Grain & Cane Infinity Gemstones";
     string public unredeemedMetadataCID = "QmYn21JY4tgB7EN35z11papkWG2YqyNdqiZJDN78zh8hYc";
     string public redeemedMetadataCID = "QmaUzAyJ5hrovGtPdVg9ZQTjo1Q2ZYU7ztZ1SQG3C6Z26D";
 
