@@ -148,10 +148,6 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         }
     }
 
-    function isGemRedeemedForId_REPLICA_TO_DELETE(uint256 gemId) public view returns (bool) {
-        return isGemRedeemedForId(gemId);
-    }
-
 
     /*
         Public function to be called to redeem gemstones when minting goblet.
@@ -170,6 +166,7 @@ contract GemstoneMinter is Gemstone, ERC1155 {
         uint16[6] memory callerOwnedValidGems = isEligibleToMintGoblet(customerAddress);
         // if the first index is 0, then they are not eligible to redeem
         if (callerOwnedValidGems[0] == 0) {
+            // console.log("Return false because first index is 0!");
             return false;
         }
         // the customer has 6 valid gemstones, so now redeem them. 
