@@ -264,10 +264,6 @@ describe("Integrated tests", function () {
         await gemstoneMinter.connect(owner).addAddressToWhitelist(addr1.address, 5);
         // mint all 6 gemstones 
         await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 0);
-        await gemstoneMinter.connect(owner).whitelistMint(owner.address, 0);
-        await gemstoneMinter.connect(owner).whitelistMint(owner.address, 0);
-        await gemstoneMinter.connect(owner).whitelistMint(owner.address, 0);
-        await gemstoneMinter.connect(owner).whitelistMint(owner.address, 0);
         await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 1);
         await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 2);
         await gemstoneMinter.connect(addr1).whitelistMint(addr1.address, 3);
